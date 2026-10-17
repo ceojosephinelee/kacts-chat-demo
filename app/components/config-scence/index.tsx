@@ -4,8 +4,10 @@ import type { IWelcomeProps } from '../welcome'
 import Welcome from '../welcome'
 
 const ConfigSence: FC<IWelcomeProps> = (props) => {
+  if (props.hasSetInputs) return null
+
   return (
-    <div className='mb-5 antialiased font-sans overflow-hidden shrink-0'>
+    <div className='flex-1 antialiased overflow-hidden' style={{ fontFamily: 'var(--body)' }}>
       <Welcome {...props} />
     </div>
   )

@@ -1,18 +1,6 @@
 import React from 'react'
 import type { FC } from 'react'
-import { useTranslation } from 'react-i18next'
-import {
-  ChatBubbleOvalLeftEllipsisIcon,
-  PencilSquareIcon,
-} from '@heroicons/react/24/outline'
-import { ChatBubbleOvalLeftEllipsisIcon as ChatBubbleOvalLeftEllipsisSolidIcon } from '@heroicons/react/24/solid'
-import Button from '@/app/components/base/button'
-// import Card from './card'
 import type { ConversationItem } from '@/types/app'
-
-function classNames(...classes: any[]) {
-  return classes.filter(Boolean).join(' ')
-}
 
 const MAX_CONVERSATION_LENTH = 20
 
@@ -29,58 +17,84 @@ const Sidebar: FC<ISidebarProps> = ({
   onCurrentIdChange,
   list,
 }) => {
-  const { t } = useTranslation()
   return (
     <div
-      className="shrink-0 flex flex-col overflow-y-auto bg-white pc:w-[244px] tablet:w-[192px] mobile:w-[240px]  border-r border-gray-200 tablet:h-[calc(100vh_-_3rem)] mobile:h-screen"
+      className="shrink-0 flex flex-col overflow-y-auto"
+      style={{
+        width: 248,
+        background: 'var(--sidebg)',
+        borderRight: '1px solid var(--line)',
+        padding: '16px 12px',
+      }}
     >
       {list.length < MAX_CONVERSATION_LENTH && (
-        <div className="flex flex-shrink-0 p-4 !pb-0">
-          <Button
-            onClick={() => { onCurrentIdChange('-1') }}
-            className="group block w-full flex-shrink-0 !justify-start !h-9 text-primary-600 items-center text-sm"
-          >
-            <PencilSquareIcon className="mr-2 h-4 w-4" /> {t('app.chat.newChat')}
-          </Button>
-        </div>
+        <button
+          onClick={() => onCurrentIdChange('-1')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 7,
+            background: 'var(--navy)',
+            color: '#fff',
+            border: 'none',
+            borderRadius: 9,
+            padding: 11,
+            fontSize: 13,
+            fontWeight: 700,
+            cursor: 'pointer',
+            marginBottom: 18,
+            fontFamily: 'var(--body)',
+          }}
+        >
+          + {'\u00A0'}새 채팅
+        </button>
       )}
 
-      <nav className="mt-4 flex-1 space-y-1 bg-white p-4 !pt-0">
+      <div
+        style={{
+          fontSize: 10,
+          letterSpacing: 1,
+          color: 'var(--ink-soft)',
+          textTransform: 'uppercase',
+          padding: '0 8px',
+          marginBottom: 9,
+        }}
+      >
+        내 대화
+      </div>
+
+      <nav className="flex-1 overflow-y-auto" style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         {list.map((item) => {
           const isCurrent = item.id === currentId
-          const ItemIcon
-            = isCurrent ? ChatBubbleOvalLeftEllipsisSolidIcon : ChatBubbleOvalLeftEllipsisIcon
           return (
             <div
               onClick={() => onCurrentIdChange(item.id)}
               key={item.id}
-              className={classNames(
-                isCurrent
-                  ? 'bg-primary-50 text-primary-600'
-                  : 'text-gray-700 hover:bg-gray-100 hover:text-gray-700',
-                'group flex items-center rounded-md px-2 py-2 text-sm font-medium cursor-pointer',
-              )}
+              className="cursor-pointer"
+              style={{
+                padding: '10px 11px',
+                borderRadius: 8,
+                fontSize: 13,
+                color: isCurrent ? 'var(--navy)' : 'var(--ink)',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                background: isCurrent ? 'var(--navy-soft)' : 'transparent',
+                fontWeight: isCurrent ? 600 : 400,
+              }}
+              onMouseEnter={(e) => {
+                if (!isCurrent) e.currentTarget.style.background = 'var(--navy-hover)'
+              }}
+              onMouseLeave={(e) => {
+                if (!isCurrent) e.currentTarget.style.background = 'transparent'
+              }}
             >
-              <ItemIcon
-                className={classNames(
-                  isCurrent
-                    ? 'text-primary-600'
-                    : 'text-gray-400 group-hover:text-gray-500',
-                  'mr-3 h-5 w-5 flex-shrink-0',
-                )}
-                aria-hidden="true"
-              />
               {item.name}
             </div>
           )
         })}
       </nav>
-      {/* <a className="flex flex-shrink-0 p-4" href="https://langgenius.ai/" target="_blank">
-        <Card><div className="flex flex-row items-center"><ChatBubbleOvalLeftEllipsisSolidIcon className="text-primary-600 h-6 w-6 mr-2" /><span>LangGenius</span></div></Card>
-      </a> */}
-      <div className="flex flex-shrink-0 pr-4 pb-4 pl-4">
-        <div className="text-gray-400 font-normal text-xs">© {copyRight} {(new Date()).getFullYear()}</div>
-      </div>
     </div>
   )
 }

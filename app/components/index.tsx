@@ -463,12 +463,24 @@ const Main: FC<IMainProps> = () => {
 
         if (getConversationIdChangeBecauseOfNew()) {
           const { data: allConversations }: any = await fetchConversations()
-          const newItem: any = await generationConversationName(allConversations[0].id)
+          const targetConversation = allConversations?.find(
+            (c: any) => c.id === tempNewConversationId,
+          ) || allConversations?.[0]
 
-          const newAllConversations = produce(allConversations, (draft: any) => {
-            draft[0].name = newItem.name
-          })
-          setConversationList(newAllConversations as any)
+          if (targetConversation) {
+            try {
+              const newItem: any = await generationConversationName(targetConversation.id)
+              const newAllConversations = produce(allConversations, (draft: any) => {
+                const index = draft.findIndex((c: any) => c.id === targetConversation.id)
+                if (index !== -1) { draft[index].name = newItem.name }
+              })
+              setConversationList(newAllConversations as any)
+            }
+            catch (e) {
+              console.warn('Failed to generate conversation name:', e)
+              setConversationList(allConversations as any)
+            }
+          }
         }
         setConversationIdChangeBecauseOfNew(false)
         resetNewConversationInputs()
@@ -621,6 +633,12 @@ const Main: FC<IMainProps> = () => {
     })
   }
 
+  const [initialQuery, setInitialQuery] = useState('')
+  const handleSendFromWelcome = (message: string) => {
+    setInitialQuery(message)
+    handleStartChat(currInputs || {})
+  }
+
   const handleFeedback = async (messageId: string, feedback: Feedbacktype) => {
     await updateFeedback({ url: `/messages/${messageId}/feedbacks`, body: { rating: feedback.rating } })
     const newChatList = chatList.map((item) => {
@@ -653,14 +671,14 @@ const Main: FC<IMainProps> = () => {
   if (!APP_ID || !APP_INFO || !promptConfig) { return <Loading type='app' /> }
 
   return (
-    <div className='bg-gray-100'>
+    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--saphia-bg)', fontFamily: 'var(--body)' }}>
       <Header
         title={APP_INFO.title}
         isMobile={isMobile}
         onShowSideBar={showSidebar}
         onCreateNewChat={() => handleConversationIdChange('-1')}
       />
-      <div className="flex rounded-t-2xl bg-white overflow-hidden">
+      <div className="flex overflow-hidden" style={{ flex: 1, minHeight: 0 }}>
         {/* sidebar */}
         {!isMobile && renderSidebar()}
         {isMobile && isShowSidebar && (
@@ -671,7 +689,7 @@ const Main: FC<IMainProps> = () => {
           </div>
         )}
         {/* main */}
-        <div className='flex-grow flex flex-col h-[calc(100vh_-_3rem)] overflow-y-auto'>
+        <div className='flex-grow flex flex-col overflow-y-auto' style={{ minWidth: 0, background: 'var(--saphia-bg)' }}>
           <ConfigSence
             conversationName={conversationName}
             hasSetInputs={hasSetInputs}
@@ -682,11 +700,12 @@ const Main: FC<IMainProps> = () => {
             canEditInputs={canEditInputs}
             savedInputs={currInputs as Record<string, any>}
             onInputsChange={setCurrInputs}
-          ></ConfigSence>
+            onSendFirstMessage={handleSendFromWelcome}
+          />
 
           {
             hasSetInputs && (
-              <div className='relative grow pc:w-[794px] max-w-full mobile:w-full pb-[180px] mx-auto mb-3.5' ref={chatListDomRef}>
+              <div className='relative flex-grow flex flex-col' ref={chatListDomRef}>
                 <Chat
                   chatList={chatList}
                   onSend={handleSend}
@@ -695,6 +714,8 @@ const Main: FC<IMainProps> = () => {
                   checkCanSend={checkCanSend}
                   visionConfig={visionConfig}
                   fileConfig={fileConfig}
+                  initialQuery={initialQuery}
+                  onInitialQuerySent={() => setInitialQuery('')}
                 />
               </div>)
           }
