@@ -6,6 +6,15 @@ import { API_KEY, API_URL, APP_ID, APP_INFO } from '@/config'
 const userPrefix = `user_${APP_ID}:`
 
 export const getInfo = (request: NextRequest) => {
+  const saphiaUser = request.headers.get('x-saphia-user')
+
+  if (saphiaUser) {
+    return {
+      sessionId: saphiaUser,
+      user: userPrefix + saphiaUser,
+    }
+  }
+
   const sessionId = request.cookies.get('session_id')?.value || v4()
   const user = userPrefix + sessionId
   return {

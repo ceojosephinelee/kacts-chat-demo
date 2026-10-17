@@ -1,4 +1,5 @@
 import { API_PREFIX } from '@/config'
+import { getSaphiaUserId } from '@/utils/user-id'
 import Toast from '@/app/components/base/toast'
 import type { AnnotationReply, MessageEnd, MessageReplace, ThoughtItem } from '@/app/components/chat/type'
 import type { VisionFile } from '@/types/app'
@@ -248,6 +249,8 @@ const handleStream = (
 
 const baseFetch = (url: string, fetchOptions: any, { needAllResponseContent }: IOtherOptions) => {
   const options = Object.assign({}, baseOptions, fetchOptions)
+  const saphiaUser = getSaphiaUserId()
+  if (saphiaUser) { options.headers.set('X-Saphia-User', saphiaUser) }
 
   const urlPrefix = API_PREFIX
 
@@ -340,6 +343,8 @@ export const upload = (fetchOptions: any): Promise<any> => {
     const xhr = options.xhr
     xhr.open(options.method, options.url)
     for (const key in options.headers) { xhr.setRequestHeader(key, options.headers[key]) }
+    const saphiaUser = getSaphiaUserId()
+    if (saphiaUser) { xhr.setRequestHeader('X-Saphia-User', saphiaUser) }
 
     xhr.withCredentials = true
     xhr.onreadystatechange = function () {
@@ -373,6 +378,8 @@ export const ssePost = (
   const options = Object.assign({}, baseOptions, {
     method: 'POST',
   }, fetchOptions)
+  const saphiaUser = getSaphiaUserId()
+  if (saphiaUser) { options.headers.set('X-Saphia-User', saphiaUser) }
 
   const urlPrefix = API_PREFIX
   const urlWithPrefix = `${urlPrefix}${url.startsWith('/') ? url : `/${url}`}`
