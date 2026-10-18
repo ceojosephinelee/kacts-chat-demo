@@ -65,7 +65,7 @@ export default function GatePage() {
       />
 
       <div style={{ fontSize: 20, fontWeight: 600, color: 'var(--ink, #1c2230)', marginBottom: 8 }}>
-        SAPHIA
+        SAPHIHUGH
       </div>
       <div style={{ fontSize: 14, color: 'var(--ink-soft, #707887)', marginBottom: 32 }}>
         초대된 사용자만 이용할 수 있습니다.

@@ -98,7 +98,7 @@ const Welcome: FC<IWelcomeProps> = ({
               padding: '19px 0',
               color: 'var(--ink)',
             }}
-            placeholder="SAPHIA 에게 물어보기"
+            placeholder="SAPHIHUGH 에게 물어보기"
             value={query}
             onChange={handleContentChange}
             onKeyUp={handleKeyUp}

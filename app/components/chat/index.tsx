@@ -280,7 +280,7 @@ const Chat: FC<IChatProps> = ({
                 color: 'var(--ink-soft)',
               }}
             >
-              SAPHIA는 임상 참고 정보를 제공하며, 특정 환자의 진단·처방을 대신하지 않습니다.
+              SAPHIHUGH는 임상 참고 정보를 제공하며, 특정 환자의 진단·처방을 대신하지 않습니다.
             </div>
           </div>
         )
