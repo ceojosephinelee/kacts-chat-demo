@@ -58,7 +58,7 @@ const Welcome: FC<IWelcomeProps> = ({
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 24,
+        padding: '24px 16px',
         fontFamily: 'var(--body)',
       }}
     >
@@ -66,38 +66,42 @@ const Welcome: FC<IWelcomeProps> = ({
         style={{
           fontSize: 27,
           fontWeight: 600,
-          marginBottom: 36,
+          marginBottom: 34,
           color: 'var(--ink)',
           letterSpacing: -0.3,
+          textAlign: 'center',
         }}
+        className="saphihugh-welcome-hi"
       >
         안녕하세요. 오늘도 함께할까요?
       </div>
 
-      <div style={{ width: '100%', maxWidth: 820 }}>
+      <div style={{ width: '100%', maxWidth: 760 }}>
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: 10,
-            border: '1.8px solid #c9ced9',
+            border: '1.6px solid var(--navy)',
             borderRadius: 999,
-            padding: '9px 9px 9px 34px',
+            padding: '9px 9px 9px 28px',
             background: 'var(--saphia-bg)',
           }}
-          className="focus-within:!border-[#1b2c56]"
+          className="saphihugh-pill focus-within:!border-[#1b2c56]"
         >
           <input
             style={{
               flex: 1,
+              minWidth: 0,
               border: 'none',
               outline: 'none',
-              fontSize: 18,
+              fontSize: 17,
               fontFamily: 'var(--body)',
               background: 'transparent',
-              padding: '19px 0',
+              padding: '14px 0',
               color: 'var(--ink)',
             }}
+            className="saphihugh-pill-input"
             placeholder="SAPHIHUGH 에게 물어보기"
             value={query}
             onChange={handleContentChange}
@@ -106,9 +110,10 @@ const Welcome: FC<IWelcomeProps> = ({
           />
           <button
             onClick={handleSend}
+            className="saphihugh-go-btn"
             style={{
-              width: 58,
-              height: 58,
+              width: 54,
+              height: 54,
               borderRadius: '50%',
               background: 'var(--navy)',
               color: '#fff',
@@ -117,7 +122,7 @@ const Welcome: FC<IWelcomeProps> = ({
               placeItems: 'center',
               cursor: 'pointer',
               flexShrink: 0,
-              fontSize: 23,
+              fontSize: 22,
             }}
             aria-label="Send"
           >
@@ -126,22 +131,50 @@ const Welcome: FC<IWelcomeProps> = ({
         </div>
       </div>
 
-      <div style={{ textAlign: 'center', marginTop: 30, maxWidth: 680 }}>
-        <div style={{ fontSize: 16, color: 'var(--ink-soft)', lineHeight: 1.7 }}>
-          학회의 연구와 학술 자료를 기반으로 필요한 지식을 찾고, 이해하고, 임상 적용을 탐색합니다.
+      <div style={{ textAlign: 'center', marginTop: 28, maxWidth: 640 }} className="saphihugh-tag">
+        <div style={{ fontSize: 15, color: 'var(--ink-soft)', lineHeight: 1.7 }} className="saphihugh-tag-l1">
+          학회의 연구와 학술 자료를 기반으로 필요한 지식을 찾고, 이해하고, 임상에 적용합니다.
         </div>
         <div
           style={{
             fontFamily: 'var(--display)',
-            fontSize: 19,
+            fontSize: 18,
             letterSpacing: 3,
             color: 'var(--navy)',
             marginTop: 8,
           }}
+          className="saphihugh-tag-l2"
         >
           ASK. LEARN. APPLY.
         </div>
       </div>
+
+      <style jsx>{`
+        @media (max-width: 768px) {
+          .saphihugh-welcome-hi {
+            font-size: 21px !important;
+            margin-bottom: 26px !important;
+          }
+          .saphihugh-pill {
+            padding: 7px 7px 7px 20px !important;
+          }
+          .saphihugh-pill-input {
+            font-size: 15px !important;
+            padding: 12px 0 !important;
+          }
+          .saphihugh-go-btn {
+            width: 46px !important;
+            height: 46px !important;
+            font-size: 19px !important;
+          }
+          .saphihugh-tag-l1 {
+            font-size: 13px !important;
+          }
+          .saphihugh-tag-l2 {
+            font-size: 15px !important;
+          }
+        }
+      `}</style>
     </div>
   )
 }

@@ -53,31 +53,37 @@ export default function GatePage() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 24,
+        padding: '24px 16px',
         fontFamily: 'var(--body)',
         background: 'var(--saphia-bg, #fff)',
       }}
     >
       <img
-        src="/saphia_symbol.png"
-        alt="SAPHIA"
-        style={{ height: 56, marginBottom: 24 }}
+        src="/saphihugh_symbol.png"
+        alt="SAPHIHUGH"
+        style={{ width: 84, height: 'auto', marginBottom: 22 }}
       />
 
-      <div style={{ fontSize: 20, fontWeight: 600, color: 'var(--ink, #1c2230)', marginBottom: 8 }}>
+      <div style={{
+        fontFamily: 'var(--body)',
+        fontWeight: 800,
+        fontSize: 26,
+        letterSpacing: 1,
+        color: 'var(--navy, #1b2c56)',
+      }}>
         SAPHIHUGH
       </div>
-      <div style={{ fontSize: 14, color: 'var(--ink-soft, #707887)', marginBottom: 32 }}>
+      <div style={{ fontSize: 14, color: 'var(--ink-soft, #707887)', margin: '10px 0 28px' }}>
         초대된 사용자만 이용할 수 있습니다.
       </div>
 
-      <div style={{ width: '100%', maxWidth: 420 }}>
+      <div style={{ width: '100%', maxWidth: 440 }}>
         <div
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: 10,
-            border: '1.8px solid #c9ced9',
+            border: '1.6px solid var(--navy, #1b2c56)',
             borderRadius: 999,
             padding: '9px 9px 9px 28px',
             background: '#fff',
@@ -88,6 +94,7 @@ export default function GatePage() {
             type="password"
             style={{
               flex: 1,
+              minWidth: 0,
               border: 'none',
               outline: 'none',
               fontSize: 16,

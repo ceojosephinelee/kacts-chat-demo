@@ -210,7 +210,7 @@ const Chat: FC<IChatProps> = ({
                 alignItems: 'center',
                 gap: 10,
                 border: '1.5px solid var(--line)',
-                borderRadius: 14,
+                borderRadius: 999,
                 padding: '5px 5px 5px 18px',
                 background: 'var(--saphia-bg)',
               }}
@@ -280,7 +280,7 @@ const Chat: FC<IChatProps> = ({
                 color: 'var(--ink-soft)',
               }}
             >
-              SAPHIHUGH는 임상 참고 정보를 제공하며, 특정 환자의 진단·처방을 대신하지 않습니다.
+              SAPHIHUGH는 임상 참고 정보를 제공하며, 최종 진단·처방의 책임은 진료 의사에게 있습니다.
             </div>
           </div>
         )

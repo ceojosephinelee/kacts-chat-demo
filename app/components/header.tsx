@@ -1,9 +1,5 @@
 import type { FC } from 'react'
 import React from 'react'
-import {
-  Bars3Icon,
-  PencilSquareIcon,
-} from '@heroicons/react/24/solid'
 
 export interface IHeaderProps {
   title: string
@@ -15,49 +11,50 @@ const Header: FC<IHeaderProps> = ({
   title,
   isMobile,
   onShowSideBar,
-  onCreateNewChat,
 }) => {
   return (
     <div
-      className="shrink-0 flex items-center justify-between"
+      className="shrink-0 flex items-center"
       style={{
-        height: 84,
+        height: 64,
         borderBottom: '1px solid var(--line)',
-        paddingLeft: 40,
-        paddingRight: 40,
+        paddingLeft: isMobile ? 16 : 20,
+        paddingRight: isMobile ? 16 : 20,
         background: 'var(--saphia-bg)',
+        gap: 12,
       }}
     >
-      <div className="flex items-center" style={{ gap: 13 }}>
-        {isMobile && (
-          <div
-            className="flex items-center justify-center h-8 w-8 cursor-pointer mr-2"
-            onClick={() => onShowSideBar?.()}
-          >
-            <Bars3Icon className="h-5 w-5" style={{ color: 'var(--navy)' }} />
-          </div>
-        )}
-        <img
-          src="/saphia_symbol.png"
-          alt="SAPHIA"
-          style={{ height: 50, width: 'auto', display: 'block' }}
-        />
-        <div style={{ lineHeight: 1.18 }}>
-          <div style={{ fontWeight: 700, fontSize: 21, color: 'var(--navy)', letterSpacing: -0.2 }}>
-            세포유전자 상태의학회
-          </div>
-          <div style={{ fontSize: 8.5, color: 'var(--navy)', opacity: 0.72, letterSpacing: 1.2, marginTop: 3 }}>
-            SOCIETY OF CELLULAR AND GENOMIC STATE MEDICINE
-          </div>
-        </div>
-      </div>
+      <img
+        src="/saphihugh_logo.png"
+        alt="SAPHIHUGH"
+        style={{
+          height: isMobile ? 34 : 46,
+          width: 'auto',
+          display: 'block',
+          marginRight: 'auto',
+        }}
+      />
       {isMobile && (
-        <div
-          className="flex items-center justify-center h-8 w-8 cursor-pointer"
-          onClick={() => onCreateNewChat?.()}
+        <button
+          onClick={() => onShowSideBar?.()}
+          style={{
+            width: 30,
+            height: 34,
+            border: 'none',
+            background: 'none',
+            cursor: 'pointer',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            gap: 8,
+            padding: 0,
+            flexShrink: 0,
+          }}
+          aria-label="Menu"
         >
-          <PencilSquareIcon className="h-5 w-5" style={{ color: 'var(--navy)' }} />
-        </div>
+          <span style={{ display: 'block', height: 3, background: 'var(--navy)', borderRadius: 2, width: '100%' }} />
+          <span style={{ display: 'block', height: 3, background: 'var(--navy)', borderRadius: 2, width: '100%' }} />
+        </button>
       )}
     </div>
   )

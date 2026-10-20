@@ -9,6 +9,8 @@ export interface ISidebarProps {
   currentId: string
   onCurrentIdChange: (id: string) => void
   list: ConversationItem[]
+  isMobile?: boolean
+  isOpen?: boolean
 }
 
 const Sidebar: FC<ISidebarProps> = ({
@@ -16,16 +18,32 @@ const Sidebar: FC<ISidebarProps> = ({
   currentId,
   onCurrentIdChange,
   list,
+  isMobile,
+  isOpen,
 }) => {
   return (
     <div
       className="shrink-0 flex flex-col overflow-y-auto"
       style={{
-        width: 248,
+        width: 260,
         background: 'var(--sidebg)',
-        borderRight: '1px solid var(--line)',
+        borderRight: isMobile ? 'none' : '1px solid var(--line)',
+        borderLeft: isMobile ? '1px solid var(--line)' : 'none',
         padding: '16px 12px',
-      }}
+        ...(isMobile
+          ? {
+              position: 'fixed',
+              top: 0,
+              right: 0,
+              bottom: 0,
+              left: 'auto',
+              zIndex: 120,
+              transform: isOpen ? 'translateX(0)' : 'translateX(100%)',
+              transition: 'transform 0.25s ease',
+              boxShadow: isOpen ? '-2px 0 18px rgba(0,0,0,0.08)' : 'none',
+            }
+          : {}),
+      } as React.CSSProperties}
     >
       {list.length < MAX_CONVERSATION_LENTH && (
         <button

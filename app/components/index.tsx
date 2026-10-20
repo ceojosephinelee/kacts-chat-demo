@@ -681,12 +681,28 @@ const Main: FC<IMainProps> = () => {
       <div className="flex overflow-hidden" style={{ flex: 1, minHeight: 0 }}>
         {/* sidebar */}
         {!isMobile && renderSidebar()}
-        {isMobile && isShowSidebar && (
-          <div className='fixed inset-0 z-50' style={{ backgroundColor: 'rgba(35, 56, 118, 0.2)' }} onClick={hideSidebar} >
-            <div className='inline-block' onClick={e => e.stopPropagation()}>
-              {renderSidebar()}
-            </div>
-          </div>
+        {isMobile && (
+          <>
+            {isShowSidebar && (
+              <div
+                style={{
+                  position: 'fixed',
+                  inset: 0,
+                  background: 'rgba(0,0,0,0.4)',
+                  zIndex: 110,
+                }}
+                onClick={hideSidebar}
+              />
+            )}
+            <Sidebar
+              list={conversationList}
+              onCurrentIdChange={handleConversationIdChange}
+              currentId={currConversationId}
+              copyRight={APP_INFO.copyright || APP_INFO.title}
+              isMobile
+              isOpen={isShowSidebar}
+            />
+          </>
         )}
         {/* main */}
         <div className='flex-grow flex flex-col overflow-y-auto' style={{ minWidth: 0, background: 'var(--saphia-bg)' }}>
