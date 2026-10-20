@@ -48,13 +48,14 @@
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
   margin: 0;
-  color: var(--ink, #1c2230);
+  color: #1f2633;
   background-color: var(--color-canvas-default);
   font-family: var(--body, "Noto Sans KR", "Pretendard", system-ui, sans-serif);
   font-size: 14px;
   font-weight: 400;
-  line-height: 1.7;
+  line-height: 1.8;
   word-wrap: break-word;
+  max-width: 620px;
 }
 
 .light {
@@ -119,8 +120,8 @@
 
 .markdown-body b,
 .markdown-body strong {
-  font-weight: 600;
-  color: var(--ink, #1c2230);
+  font-weight: 700;
+  color: var(--navy, #1b2c56);
 }
 
 .markdown-body dfn {
@@ -323,39 +324,36 @@
 .markdown-body h4,
 .markdown-body h5,
 .markdown-body h6 {
-  margin-top: 20px;
+  margin-top: 24px;
   margin-bottom: 10px;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.4;
-  color: var(--ink, #1c2230);
+  color: var(--navy, #1b2c56);
+  font-family: var(--display, "Nanum Myeongjo", Georgia, serif);
 }
 
 .markdown-body h1 {
-  font-size: 1.3em;
-  font-weight: 700;
+  font-size: 1.25em;
 }
 
 .markdown-body h2 {
   font-size: 1.15em;
-  font-weight: 600;
 }
 
 .markdown-body h3 {
   font-size: 1.05em;
-  font-weight: 600;
 }
 
 .markdown-body h4,
 .markdown-body h5,
 .markdown-body h6 {
   font-size: 1em;
-  font-weight: 600;
 }
 
 
 .markdown-body p {
   margin-top: 0;
-  margin-bottom: 10px;
+  margin-bottom: 14px;
 }
 
 .markdown-body blockquote {
@@ -377,7 +375,23 @@
 }
 
 .markdown-body ul {
-  list-style: disc;
+  list-style: none;
+}
+
+.markdown-body ul > li {
+  position: relative;
+  padding-left: 0.2em;
+}
+
+.markdown-body ul > li::before {
+  content: "";
+  position: absolute;
+  left: -1.1em;
+  top: 0.65em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--navy, #1b2c56);
 }
 
 .markdown-body ol ol,
@@ -475,7 +489,7 @@
 .markdown-body pre,
 .markdown-body details {
   margin-top: 0;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .markdown-body blockquote> :first-child {
@@ -594,11 +608,24 @@
 }
 
 .markdown-body li>p {
-  margin-top: 16px;
+  margin-top: 4px;
+  margin-bottom: 4px;
 }
 
 .markdown-body li+li {
-  margin-top: 0.35em;
+  margin-top: 10px;
+}
+
+.markdown-body li strong {
+  color: var(--navy, #1b2c56);
+}
+
+.markdown-body li > strong:first-child {
+  color: var(--navy, #1b2c56);
+}
+
+.markdown-body li > strong:first-child ~ * {
+  color: #4a5160;
 }
 
 .markdown-body dl {
@@ -625,7 +652,7 @@
 
 .markdown-body table th,
 .markdown-body table td {
-  padding: 10px 14px;
+  padding: 8px 12px;
   border: 1px solid var(--line, #e6e8ee);
 }
 

@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SAPHIHUGH 답변 UI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#1b2c56;
+    --ink:#1f2633;        /* 본문 — 순검정 대신 */
+    --ink-soft:#4a5160;   /* 보조 텍스트 */
+    --cream:#fef2d5;
+    --ai-bubble:#f7f8fa;
+    --line:#e6e8ee;
+    --line-soft:#eef0f4;
+    --chip:#eef1f7;
+    --accent:#1b2c56;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;background:#fff;color:var(--ink);
+    font-family:"Noto Sans KR",sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding:40px 16px 80px;
+  }
+  .wrap{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:40px}
+  @media(max-width:920px){.wrap{grid-template-columns:1fr}}
+  .col h2.lbl{
+    font-family:"Noto Sans KR";font-size:13px;letter-spacing:.04em;
+    color:var(--ink-soft);font-weight:700;text-transform:uppercase;
+    margin:0 0 14px;display:flex;align-items:center;gap:8px;
+  }
+  .lbl .dot{width:8px;height:8px;border-radius:50%}
+  .dot.bad{background:#d98b8b}.dot.good{background:#4a9d7f}
+
+  /* ===== 공통 말풍선 틀 ===== */
+  .thread{border:1px solid var(--line);border-radius:18px;padding:22px 22px 18px;background:#fff}
+  .q{
+    display:inline-block;background:var(--navy);color:#fff;
+    font-size:14px;line-height:1.5;padding:10px 15px;border-radius:14px 14px 4px 14px;
+    margin-left:auto;max-width:85%;
+  }
+  .qrow{display:flex;margin-bottom:20px}
+  .answer{font-size:15px}
+
+  /* ============ BEFORE (현재) ============ */
+  .before .answer{line-height:1.6;color:#111}
+  .before .answer p{margin:0 0 10px}
+  .before b{font-weight:700}
+  .before .src{margin-top:16px;border-top:1px solid var(--line);padding-top:12px}
+  .before .src .t{font-size:13px;color:var(--ink-soft);margin-bottom:8px}
+  .before .snip{background:#f3f4f7;border-radius:10px;padding:10px;font-size:12.5px;color:#444;line-height:1.5;margin:6px 0}
+  .before .pct{font-size:11px;color:#8890a0;margin-bottom:3px}
+
+  /* ============ AFTER (개선) ============ */
+  .after .answer{line-height:1.8;color:var(--ink);max-width:620px}
+  /* 핵심 리드 */
+  .lead{
+    border-left:3px solid var(--navy);background:#fbfbfd;
+    padding:12px 16px;border-radius:0 10px 10px 0;margin:0 0 20px;
+    font-size:15.5px;line-height:1.7;color:var(--ink);
+  }
+  .lead .k{font-family:"Nanum Myeongjo";font-weight:800;color:var(--navy);font-size:13px;display:block;margin-bottom:4px;letter-spacing:.02em}
+  /* 본문 단락 */
+  .after .answer p{margin:0 0 16px}
+  /* 점검 항목 — 런인 볼드 대신 깔끔한 정의 리스트 */
+  .checks{margin:4px 0 20px;display:flex;flex-direction:column;gap:12px}
+  .check{display:flex;gap:12px;align-items:flex-start}
+  .check .mk{flex:none;width:6px;height:6px;border-radius:50%;background:var(--navy);margin-top:9px}
+  .check .term{font-weight:700;color:var(--navy);margin-right:6px}
+  .check .desc{color:var(--ink-soft)}
+  .check .body{font-size:14.5px;line-height:1.65}
+  /* 출처 — 접힘 기본, 깔끔한 칩 */
+  .sources{margin-top:22px;border-top:1px dashed var(--line);padding-top:16px}
+  .sources .hd{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-soft);font-weight:700;margin-bottom:12px}
+  .sources .hd .ic{width:14px;height:14px;opacity:.7}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{
+    display:inline-flex;align-items:center;gap:7px;background:var(--chip);
+    border:1px solid #e3e7ef;color:var(--navy);
+    font-size:13px;font-weight:500;padding:7px 13px;border-radius:999px;cursor:pointer;
+    transition:.15s;
+  }
+  .chip:hover{background:#e3e8f2}
+  .chip .fi{width:13px;height:13px;opacity:.6}
+  .chip.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .chip.active .fi{filter:brightness(5)}
+  /* 펼친 원문 */
+  .passage{
+    margin-top:12px;background:#fbfbfd;border:1px solid var(--line);
+    border-radius:12px;padding:16px 18px;font-size:14px;line-height:1.75;color:var(--ink-soft);
+    max-height:260px;overflow:auto;white-space:pre-wrap;
+  }
+  .passage .mark{background:#fff4d6;color:var(--ink);padding:1px 2px;border-radius:3px}
+
+  .foot{margin-top:24px;text-align:center;font-size:12px;color:#9aa1b0;line-height:1.6}
+
+  /* 주석 */
+  .notes{grid-column:1/-1;margin-top:8px;background:var(--navy);color:#fff;border-radius:16px;padding:26px 30px}
+  .notes h3{margin:0 0 16px;font-family:"Nanum Myeongjo";font-size:19px;font-weight:800}
+  .notes ol{margin:0;padding-left:20px}
+  .notes li{margin-bottom:11px;line-height:1.6;font-size:14.5px;color:#dde2ee}
+  .notes li b{color:#fff}
+  .notes .tag{display:inline-block;background:rgba(255,255,255,.14);border-radius:6px;padding:1px 7px;font-size:12px;margin-right:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ===================== BEFORE ===================== -->
+  <div class="col before">
+    <h2 class="lbl"><span class="dot bad"></span>지금 (가독성 ↓)</h2>
+    <div class="thread">
+      <div class="qrow"><div class="q">고지혈증 환자 활성화 시 니들 막힘 해결 요령</div></div>
+      <div class="answer">
+        <p><b>흡인 시</b> 상층 유백막 제외, 적혈구 혼입 최소화(적혈구는 점도의 최대 결정 인자)</p>
+        <p><b>유로·커넥터</b> 부분 폐색 여부 확인(실효 반경 감소 시 압력이 조기에 상한 도달)</p>
+        <p><b>시료 온도</b> 저온은 점도 자체를 올리므로 주의</p>
+        <p>니들 폐색이 발생했다면, 그 자체가 1차 통과에서 활성화와 피브린 중합이 정상적으로 일어났다는 지표로 읽는 것이 정확합니다. 20G 주사 니들로는 통과된다는 점이 이를 뒷받침합니다. 제제 자체의 문제가 아니라 좁고 긴 관 안에서 응고가 앞당겨지는 시간 문제입니다.</p>
+        <div class="src">
+          <div class="t">출처</div>
+          <div class="pct">일치도 64%</div>
+          <div class="snip">요약 항목 규격 원인 점도 상승(활성화 용량 증가) · VLDL의 응고 표면 제공 · 혈소판 과반응성 · 피브리노겐 증가 · 지질 입자 고위험군 고중성지방형, 식후 채혈, 원심 후 혈장 혼탁 채혈 전 8시간 공복…</div>
+          <div class="pct">일치도 53%</div>
+          <div class="snip">ACTIVE CELL THERAPY RESEARCH SOCIETY · CLINICAL NOTE 고지혈증 환자에서 SS-PReF 활성화 중 니들 폐색 — 기전과 제조 규격…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== AFTER ===================== -->
+  <div class="col after">
+    <h2 class="lbl"><span class="dot good"></span>개선안 (스캔 가능)</h2>
+    <div class="thread">
+      <div class="qrow"><div class="q">고지혈증 환자 활성화 시 니들 막힘 해결 요령</div></div>
+      <div class="answer">
+
+        <div class="lead">
+          <span class="k">핵심</span>
+          니들 폐색은 제제 결함이 아니라, 좁고 긴 관 안에서 <b>응고가 앞당겨지는 시간 문제</b>입니다. 20G로 통과된다는 건 1차 통과에서 활성화·피브린 중합이 정상적으로 일어났다는 지표로 읽는 것이 정확합니다.
+        </div>
+
+        <div style="font-family:'Nanum Myeongjo';font-weight:800;color:var(--navy);font-size:14px;margin:0 0 12px">점검 포인트</div>
+        <div class="checks">
+          <div class="check"><span class="mk"></span><div class="body"><span class="term">흡인</span><span class="desc">상층 유백막 제외, 적혈구 혼입 최소화 (적혈구가 점도의 최대 결정 인자)</span></div></div>
+          <div class="check"><span class="mk"></span><div class="body"><span class="term">유로·커넥터</span><span class="desc">부분 폐색 여부 확인 (실효 반경 감소 시 압력이 조기에 상한 도달)</span></div></div>
+          <div class="check"><span class="mk"></span><div class="body"><span class="term">시료 온도</span><span class="desc">저온은 점도 자체를 올리므로 주의</span></div></div>
+        </div>
+
+        <div class="sources">
+          <div class="hd"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>출처 3건</div>
+          <div class="chips">
+            <span class="chip active"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>고지혈증 SS-PReF 니들폐색 규격</span>
+            <span class="chip"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>전단응력 활성화 통과횟수</span>
+            <span class="chip"><svg class="fi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/></svg>SS-aPRF SS-aPRP 임상가이드</span>
+          </div>
+          <div class="passage">고지혈증 환자에서 SS-PReF 활성화 중 니들 폐색 — 기전과 제조 규격
+
+<span class="mark">점도 상승(활성화 용량 증가)의 원인</span>: VLDL이 응고 표면을 제공, 혈소판 과반응성, 피브리노겐 증가. 지질 입자 고위험군은 고중성지방형이며, 식후 채혈·원심 후 혈장 혼탁이 지표.
+
+채혈 전 8시간 공복, 수분 섭취, 지질 치료제 유지. 채혈~활성화는 매끄러운 채혈 → 즉시 원심 → 즉시 흡인·활성화, 중단 없는 흐름으로 진행.</div>
+        </div>
+
+      </div>
+      <div class="foot">SAPHIHUGH는 임상 참고 정보를 제공하며, 최종 진단·처방의 책임은 진료 의사에게 있습니다.</div>
+    </div>
+  </div>
+
+  <!-- ===================== 주석 ===================== -->
+  <div class="notes">
+    <h3>무엇이 바뀌었나 — Claude Code 적용 포인트</h3>
+    <ol>
+      <li><span class="tag">리드</span><b>답변 맨 위에 "핵심" 한 단락</b>을 배치. 의사가 3초 안에 결론을 잡게. 왼쪽 네이비 바 + 연한 배경으로만 구분(무거운 박스 X).</li>
+      <li><span class="tag">본문</span><b>런인 볼드(흡인 시·시료 온도…)를 "점검 포인트" 정의 리스트로.</b> 볼드 범벅 대신 작은 점 마커 + 네이비 용어 + 회색 설명 → 눈으로 쭉 스캔됨.</li>
+      <li><span class="tag">볼드</span><b>볼드는 진짜 강조에만.</b> 모든 줄을 볼드하면 아무것도 강조가 안 됨. 핵심 수치·결론 어구에만 제한.</li>
+      <li><span class="tag">여백</span><b>줄간격 1.8, 단락 간 16px, 본문 최대폭 ~620px.</b> 한 줄이 너무 길지 않게(가독 폭 제한) + 숨 쉴 공간.</li>
+      <li><span class="tag">출처</span><b>일치도(%) 제거</b>, 칩은 <b>파일명 정리</b>(.md·_ 제거). 칩 클릭 시 아래에 원문 펼침(<b>전체 content, 잘림 없음</b>), 매칭 구절은 <b>하이라이트</b>.</li>
+      <li><span class="tag">색</span>본문 글자색 순검정(#000) 대신 <b>#1f2633</b>(살짝 부드럽게), 보조설명은 <b>#4a5160</b>. 눈 피로 ↓.</li>
+    </ol>
+  </div>
+
+</div>
+</body>
+</html>
