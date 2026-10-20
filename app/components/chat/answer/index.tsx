@@ -14,6 +14,7 @@ import { randomString } from '@/utils/string'
 import ImageGallery from '../../base/image-gallery'
 import LoadingAnim from '../loading-anim'
 import s from '../style.module.css'
+import Citation from '../citation'
 import Thought from '../thought'
 
 function OperationBtn({ innerContent, onClick, className }: { innerContent: React.ReactNode, onClick?: () => void, className?: string }) {
@@ -57,7 +58,7 @@ const Answer: FC<IAnswerProps> = ({
   allToolIcons,
   suggestionClick = () => { },
 }) => {
-  const { id, content, feedback, agent_thoughts, workflowProcess, suggestedQuestions = [] } = item
+  const { id, content, feedback, agent_thoughts, workflowProcess, suggestedQuestions = [], citation } = item
   const isAgentMode = !!agent_thoughts && agent_thoughts.length > 0
 
   const { t } = useTranslation()
@@ -203,6 +204,9 @@ const Answer: FC<IAnswerProps> = ({
                   ))}
                 </div>
               </div>
+            )}
+            {citation && citation.length > 0 && (
+              <Citation citations={citation} />
             )}
           </div>
           <div className="absolute top-[-14px] right-[-14px] flex flex-row justify-end gap-1">
