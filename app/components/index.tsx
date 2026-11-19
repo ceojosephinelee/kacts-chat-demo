@@ -447,7 +447,10 @@ const Main: FC<IMainProps> = () => {
 
         if (isFirstMessage && newConversationId) { tempNewConversationId = newConversationId }
 
-        setMessageTaskId(taskId)
+        if (taskId) {
+          setMessageTaskId(taskId)
+          if (isFirstMessage) console.log('[stop-debug] SSE task_id received:', taskId)
+        }
         // has switched to other conversation
         if (prevTempNewConversationId !== getCurrConversationId()) {
           setIsRespondingConCurrCon(false)
@@ -636,9 +639,15 @@ const Main: FC<IMainProps> = () => {
 
   const handleStop = () => {
     abortController?.abort()
+    console.log('[stop-debug] handleStop called, messageTaskId:', messageTaskId)
     if (messageTaskId) {
-      stopChatMessage(messageTaskId).catch(() => {})
+      stopChatMessage(messageTaskId)
+        .then((res: any) => console.log('[stop-debug] stop API response:', res))
+        .catch((err: any) => console.warn('[stop-debug] stop API error:', err))
       setMessageTaskId('')
+    }
+    else {
+      console.warn('[stop-debug] messageTaskId is empty — stop API not called')
     }
     setRespondingFalse()
   }
@@ -680,7 +689,8 @@ const Main: FC<IMainProps> = () => {
 
   if (appUnavailable) { return <AppUnavailable isUnknownReason={isUnknownReason} errMessage={!hasSetAppConfig ? 'Please set APP_ID and API_KEY in config/index.tsx' : ''} /> }
 
-  if (!APP_ID || !APP_INFO || !promptConfig) { return <Loading type='app' /> }
+  // inited가 true가 되면 promptConfig·visionConfig·fileConfig 등 모든 앱 파라미터가 준비된 상태임
+  if (!APP_ID || !APP_INFO || !inited) { return <Loading type='app' /> }
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column', background: 'var(--saphia-bg)', fontFamily: 'var(--body)' }}>

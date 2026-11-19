@@ -2,13 +2,11 @@ import {
   useCallback,
 } from 'react'
 import {
-  RiLink,
   RiUploadCloud2Line,
 } from '@remixicon/react'
 import { useTranslation } from 'react-i18next'
 import { useFile } from './hooks'
 import type { FileEntity, FileUpload } from './types'
-import FileFromLinkOrLocal from './file-from-link-or-local'
 import {
   FileContextProvider,
   useStore,
@@ -42,11 +40,6 @@ const FileUploaderInAttachment = ({
       label: t('common.fileUploader.uploadFromComputer'),
       icon: <RiUploadCloud2Line className='h-4 w-4' />,
     },
-    {
-      value: TransferMethod.remote_url,
-      label: t('common.fileUploader.pasteFileLink'),
-      icon: <RiLink className='h-4 w-4' />,
-    },
   ]
 
   const renderButton = useCallback((option: Option, open?: boolean) => {
@@ -67,23 +60,9 @@ const FileUploaderInAttachment = ({
       </Button>
     )
   }, [fileConfig, files.length])
-  const renderTrigger = useCallback((option: Option) => {
-    return (open: boolean) => renderButton(option, open)
-  }, [renderButton])
   const renderOption = useCallback((option: Option) => {
-    if (option.value === TransferMethod.local_file && fileConfig?.allowed_file_upload_methods?.includes(TransferMethod.local_file)) { return renderButton(option) }
-
-    if (option.value === TransferMethod.remote_url && fileConfig?.allowed_file_upload_methods?.includes(TransferMethod.remote_url)) {
-      return (
-        <FileFromLinkOrLocal
-          key={option.value}
-          showFromLocal={false}
-          trigger={renderTrigger(option)}
-          fileConfig={fileConfig}
-        />
-      )
-    }
-  }, [renderButton, renderTrigger, fileConfig])
+    if (option.value === TransferMethod.local_file) { return renderButton(option) }
+  }, [renderButton])
 
   return (
     <div>
