@@ -44,7 +44,7 @@ const Main: FC<IMainProps> = () => {
   const [isShowSidebar, { setTrue: showSidebar, setFalse: hideSidebar }] = useBoolean(false)
   const [visionConfig, setVisionConfig] = useState<VisionSettings | undefined>({
     enabled: false,
-    number_limits: 2,
+    number_limits: 3,
     detail: Resolution.low,
     transfer_methods: [TransferMethod.local_file],
   })
@@ -265,7 +265,8 @@ const Main: FC<IMainProps> = () => {
         setVisionConfig({
           ...file_upload?.image,
           enabled: !!(outerFileUploadEnabled && file_upload?.image?.enabled),
-          image_file_size_limit: system_parameters?.system_parameters || 0,
+          number_limits: file_upload?.image?.number_limits ?? 3,
+          image_file_size_limit: system_parameters?.image_file_size_limit ?? 10,
         })
         setFileConfig({
           enabled: outerFileUploadEnabled,

@@ -61,6 +61,9 @@ const Answer: FC<IAnswerProps> = ({
   const { id, content, feedback, agent_thoughts, workflowProcess, suggestedQuestions = [], citation } = item
   const isAgentMode = !!agent_thoughts && agent_thoughts.length > 0
 
+  const hasNoDoc = content.includes('[NO_DOC]')
+  const displayContent = hasNoDoc ? content.replace(/\[NO_DOC\]/g, '').trimEnd() : content
+
   const { t } = useTranslation()
 
   const renderFeedbackRating = (rating: MessageRating | undefined) => {
@@ -192,7 +195,7 @@ const Answer: FC<IAnswerProps> = ({
               : (isAgentMode
                 ? agentModeAnswer
                 : (
-                  <StreamdownMarkdown content={content} />
+                  <StreamdownMarkdown content={displayContent} />
                 ))}
             {suggestedQuestions.length > 0 && (
               <div className="mt-3">
@@ -205,7 +208,7 @@ const Answer: FC<IAnswerProps> = ({
                 </div>
               </div>
             )}
-            {citation && citation.length > 0 && (
+            {!hasNoDoc && citation && citation.length > 0 && (
               <Citation citations={citation} />
             )}
           </div>

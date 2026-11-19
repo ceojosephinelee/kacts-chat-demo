@@ -13,6 +13,7 @@ import Toast from '@/app/components/base/toast'
 import ChatImageUploader from '@/app/components/base/image-uploader/chat-image-uploader'
 import ImageList from '@/app/components/base/image-uploader/image-list'
 import { useImageFiles } from '@/app/components/base/image-uploader/hooks'
+import Loading02 from '@/app/components/base/icons/line/loading-02'
 import FileUploaderInAttachmentWrapper from '@/app/components/base/file-uploader-in-attachment'
 import type { FileEntity, FileUpload } from '@/app/components/base/file-uploader-in-attachment/types'
 import { getProcessedFiles } from '@/app/components/base/file-uploader-in-attachment/utils'
@@ -202,6 +203,17 @@ const Chat: FC<IChatProps> = ({
               bottom: 0,
             }}
           >
+            {visionConfig?.enabled && files.length > 0 && (
+              <div style={{ maxWidth: 720, margin: '0 auto 8px' }}>
+                <ImageList
+                  list={files}
+                  onRemove={onRemove}
+                  onReUpload={onReUpload}
+                  onImageLinkLoadSuccess={onImageLinkLoadSuccess}
+                  onImageLinkLoadError={onImageLinkLoadError}
+                />
+              </div>
+            )}
             <div
               style={{
                 maxWidth: 720,
@@ -229,17 +241,6 @@ const Chat: FC<IChatProps> = ({
                 )
               }
               {
-                visionConfig?.enabled && files.length > 0 && (
-                  <ImageList
-                    list={files}
-                    onRemove={onRemove}
-                    onReUpload={onReUpload}
-                    onImageLinkLoadSuccess={onImageLinkLoadSuccess}
-                    onImageLinkLoadError={onImageLinkLoadError}
-                  />
-                )
-              }
-              {
                 fileConfig?.enabled && (
                   <FileUploaderInAttachmentWrapper
                     fileConfig={fileConfig}
@@ -263,18 +264,41 @@ const Chat: FC<IChatProps> = ({
                 onKeyDown={handleKeyDown}
                 autoSize
               />
-              <button
-                className={s.sendBtn}
-                onClick={handleSend}
-                aria-label="Send"
-              >
-                ↑
-              </button>
+              {(() => {
+                const isUploading = files.some(f => f.progress > -1 && f.progress < 100)
+                return (
+                  <button
+                    className={s.sendBtn}
+                    onClick={handleSend}
+                    disabled={isUploading}
+                    aria-label="Send"
+                    style={{ opacity: isUploading ? 0.6 : 1, cursor: isUploading ? 'not-allowed' : 'pointer' }}
+                  >
+                    {isUploading
+                      ? <Loading02 className="animate-spin w-4 h-4" />
+                      : '↑'
+                    }
+                  </button>
+                )
+              })()}
             </div>
+            {visionConfig?.enabled && (
+              <div
+                style={{
+                  maxWidth: 720,
+                  margin: '4px auto 0',
+                  fontSize: 10,
+                  color: 'var(--ink-soft)',
+                  paddingLeft: 4,
+                }}
+              >
+                이미지 첨부 시 환자 식별정보(이름·차트번호)가 보이지 않도록 가린 뒤 올려주세요.
+              </div>
+            )}
             <div
               style={{
                 maxWidth: 720,
-                margin: '10px auto 0',
+                margin: '8px auto 0',
                 textAlign: 'center',
                 fontSize: 11,
                 color: 'var(--ink-soft)',

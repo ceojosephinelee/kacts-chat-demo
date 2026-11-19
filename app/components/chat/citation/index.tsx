@@ -33,7 +33,15 @@ const Citation: FC<ICitationProps> = ({ citations }) => {
     if (!citations || citations.length === 0) return
     const docNames = [...new Set(citations.map(c => c.document_name))]
     Promise.all(docNames.map(n => lookupRefs(n)))
-      .then(results => setRefs(dedupRefs(results.flat())))
+      .then((results) => {
+        const all = dedupRefs(results.flat())
+        const sorted = [...all].sort((a, b) => {
+          if (a.url && !b.url) return -1
+          if (!a.url && b.url) return 1
+          return 0
+        })
+        setRefs(sorted.slice(0, 5))
+      })
       .catch(() => {})
   }, [citations])
 
@@ -41,8 +49,11 @@ const Citation: FC<ICitationProps> = ({ citations }) => {
 
   return (
     <div style={{ marginTop: 11, paddingTop: 10, borderTop: '1px dashed var(--line, #e6e8ee)' }}>
-      <div style={{ fontSize: 11, color: 'var(--ink-soft, #707887)', marginBottom: 6, fontWeight: 600 }}>
-        근거 논문
+      <div style={{ fontSize: 11, color: 'var(--ink-soft, #707887)', marginBottom: 3, fontWeight: 600 }}>
+        참고한 자료의 출처 논문
+      </div>
+      <div style={{ fontSize: 10, color: 'var(--ink-soft, #707887)', marginBottom: 7 }}>
+        답변 중 임상 판단·계산 부분은 위 논문이 아니라 추론입니다.
       </div>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
         {refs.map((ref, i) => {

@@ -89,7 +89,7 @@ const Uploader: FC<UploaderProps> = ({
         `}
         onClick={e => (e.target as HTMLInputElement).value = ''}
         type='file'
-        accept='.png, .jpg, .jpeg, .webp, .gif'
+        accept='image/*'
         onChange={handleChange}
         disabled={disabled}
       />
