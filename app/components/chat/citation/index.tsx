@@ -1,109 +1,98 @@
 'use client'
 import type { FC } from 'react'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import type { CitationItem } from '../type'
+import type { Ref } from '@/lib/refs'
+import { lookupRefs } from '@/lib/refs'
 
 interface ICitationProps {
   citations: CitationItem[]
 }
 
-interface GroupedCitation {
-  document_name: string
-  items: CitationItem[]
+function dedupRefs(refs: Ref[]): Ref[] {
+  const seen = new Set<string>()
+  return refs.filter(r => {
+    const key = r.pmid ?? r.doi ?? r.cite
+    if (seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
 }
 
-function formatDocName(raw: string): string {
-  return raw
-    .replace(/\.(md|pdf|txt|docx?)$/i, '')
-    .replace(/_/g, ' ')
+function refTag(ref: Ref): string | null {
+  if (!ref.url) return null
+  if (ref.pmid || ref.pmcid) return 'PubMed'
+  if (ref.doi) return 'DOI'
+  return null
 }
 
 const Citation: FC<ICitationProps> = ({ citations }) => {
-  const [expandedDoc, setExpandedDoc] = useState<string | null>(null)
+  const [refs, setRefs] = useState<Ref[]>([])
 
-  if (!citations || citations.length === 0) return null
+  useEffect(() => {
+    if (!citations || citations.length === 0) return
+    const docNames = [...new Set(citations.map(c => c.document_name))]
+    Promise.all(docNames.map(n => lookupRefs(n)))
+      .then(results => setRefs(dedupRefs(results.flat())))
+      .catch(() => {})
+  }, [citations])
 
-  const grouped: GroupedCitation[] = []
-  const seen = new Set<string>()
-  for (const c of citations) {
-    if (!seen.has(c.document_name)) {
-      seen.add(c.document_name)
-      grouped.push({
-        document_name: c.document_name,
-        items: citations.filter(x => x.document_name === c.document_name),
-      })
-    }
-  }
-
-  const toggleDoc = (docName: string) => {
-    setExpandedDoc(prev => prev === docName ? null : docName)
-  }
+  if (!refs.length) return null
 
   return (
     <div style={{ marginTop: 11, paddingTop: 10, borderTop: '1px dashed var(--line, #e6e8ee)' }}>
       <div style={{ fontSize: 11, color: 'var(--ink-soft, #707887)', marginBottom: 6, fontWeight: 600 }}>
-        출처
+        근거 논문
       </div>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-        {grouped.map(g => {
-          const label = formatDocName(g.document_name)
-          return (
-            <div key={g.document_name} style={{ display: 'inline-flex', flexDirection: 'column' }}>
-              <button
-                onClick={() => toggleDoc(g.document_name)}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 4,
-                  padding: '3px 10px',
-                  fontSize: 11,
-                  fontFamily: 'var(--body)',
-                  color: 'var(--navy, #1b2c56)',
-                  background: 'var(--navy-soft, #e9edf6)',
-                  border: '1px solid var(--navy-hover, #f2f4f9)',
-                  borderRadius: 999,
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap',
-                  maxWidth: 220,
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}
-                title={label}
-              >
-                <span style={{ flexShrink: 0, fontSize: 10 }}>📄</span>
-                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{label}</span>
-              </button>
-              {expandedDoc === g.document_name && (
-                <div
-                  style={{
-                    marginTop: 6,
-                    padding: '10px 12px',
-                    background: 'var(--navy-hover, #f2f4f9)',
-                    border: '1px solid var(--line, #e6e8ee)',
-                    borderRadius: 8,
-                    fontSize: 12,
-                    lineHeight: 1.6,
-                    color: 'var(--ink, #1c2230)',
-                    maxWidth: 400,
-                    maxHeight: 240,
-                    overflowY: 'auto',
-                  }}
-                >
-                  {g.items.map((item, i) => (
-                    <div key={i} style={{ marginBottom: i < g.items.length - 1 ? 8 : 0 }}>
-                      <div style={{
-                        fontSize: 12,
-                        lineHeight: 1.6,
-                        whiteSpace: 'pre-wrap',
-                      }}>
-                        {item.content}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+        {refs.map((ref, i) => {
+          const tag = refTag(ref)
+          const chip = (
+            <span
+              style={{
+                display: 'inline-flex',
+                alignItems: 'baseline',
+                gap: 5,
+                padding: '4px 10px',
+                fontSize: 11,
+                lineHeight: 1.5,
+                fontFamily: 'var(--body)',
+                color: 'var(--navy, #1b2c56)',
+                background: 'var(--navy-soft, #e9edf6)',
+                border: '1px solid var(--navy-hover, #f2f4f9)',
+                borderRadius: 6,
+              }}
+            >
+              <span>{ref.cite}</span>
+              {tag && (
+                <span style={{
+                  fontSize: 10,
+                  fontWeight: 600,
+                  color: '#fff',
+                  background: 'var(--navy, #1b2c56)',
+                  borderRadius: 4,
+                  padding: '1px 5px',
+                  flexShrink: 0,
+                }}>
+                  {tag}
+                </span>
               )}
-            </div>
+            </span>
           )
+
+          return ref.url
+            ? (
+              <a
+                key={i}
+                href={ref.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ textDecoration: 'none', display: 'inline-flex' }}
+              >
+                {chip}
+              </a>
+            )
+            : <span key={i} style={{ display: 'inline-flex' }}>{chip}</span>
         })}
       </div>
     </div>
