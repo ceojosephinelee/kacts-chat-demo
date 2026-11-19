@@ -9,7 +9,7 @@ import Toast from '@/app/components/base/toast'
 import Sidebar from '@/app/components/sidebar'
 import ConfigSence from '@/app/components/config-scence'
 import Header from '@/app/components/header'
-import { fetchAppParams, fetchChatList, fetchConversations, generationConversationName, sendChatMessage, updateFeedback } from '@/service'
+import { fetchAppParams, fetchChatList, fetchConversations, generationConversationName, sendChatMessage, stopChatMessage, updateFeedback } from '@/service'
 import type { ChatItem, ConversationItem, Feedbacktype, PromptConfig, VisionFile, VisionSettings } from '@/types/app'
 import type { FileUpload } from '@/app/components/base/file-uploader-in-attachment/types'
 import { Resolution, TransferMethod, WorkflowRunningStatus } from '@/types/app'
@@ -634,9 +634,20 @@ const Main: FC<IMainProps> = () => {
     })
   }
 
+  const handleStop = () => {
+    abortController?.abort()
+    if (messageTaskId) {
+      stopChatMessage(messageTaskId).catch(() => {})
+      setMessageTaskId('')
+    }
+    setRespondingFalse()
+  }
+
   const [initialQuery, setInitialQuery] = useState('')
-  const handleSendFromWelcome = (message: string) => {
+  const [initialFiles, setInitialFiles] = useState<VisionFile[]>([])
+  const handleSendFromWelcome = (message: string, files: VisionFile[] = []) => {
     setInitialQuery(message)
+    setInitialFiles(files)
     handleStartChat(currInputs || {})
   }
 
@@ -718,6 +729,7 @@ const Main: FC<IMainProps> = () => {
             savedInputs={currInputs as Record<string, any>}
             onInputsChange={setCurrInputs}
             onSendFirstMessage={handleSendFromWelcome}
+            visionConfig={visionConfig}
           />
 
           {
@@ -728,11 +740,13 @@ const Main: FC<IMainProps> = () => {
                   onSend={handleSend}
                   onFeedback={handleFeedback}
                   isResponding={isResponding}
+                  onStop={handleStop}
                   checkCanSend={checkCanSend}
                   visionConfig={visionConfig}
                   fileConfig={fileConfig}
                   initialQuery={initialQuery}
-                  onInitialQuerySent={() => setInitialQuery('')}
+                  initialFiles={initialFiles}
+                  onInitialQuerySent={() => { setInitialQuery(''); setInitialFiles([]) }}
                 />
               </div>)
           }

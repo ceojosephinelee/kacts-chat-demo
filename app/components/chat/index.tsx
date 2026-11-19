@@ -25,12 +25,14 @@ export interface IChatProps {
   onFeedback?: FeedbackFunc
   checkCanSend?: () => boolean
   onSend?: (message: string, files: VisionFile[]) => void
+  onStop?: () => void
   useCurrentUserAvatar?: boolean
   isResponding?: boolean
   controlClearQuery?: number
   visionConfig?: VisionSettings
   fileConfig?: FileUpload
   initialQuery?: string
+  initialFiles?: VisionFile[]
   onInitialQuerySent?: () => void
 }
 
@@ -41,12 +43,14 @@ const Chat: FC<IChatProps> = ({
   onFeedback,
   checkCanSend,
   onSend = () => { },
+  onStop,
   useCurrentUserAvatar,
   isResponding,
   controlClearQuery,
   visionConfig,
   fileConfig,
   initialQuery,
+  initialFiles,
   onInitialQuerySent,
 }) => {
   const { t } = useTranslation()
@@ -101,7 +105,7 @@ const Chat: FC<IChatProps> = ({
     }
     if (!initialQuerySentRef.current) {
       initialQuerySentRef.current = true
-      onSend(initialQuery, [])
+      onSend(initialQuery, initialFiles ?? [])
       onInitialQuerySent?.()
     }
   }, [initialQuery])
@@ -266,6 +270,20 @@ const Chat: FC<IChatProps> = ({
               />
               {(() => {
                 const isUploading = files.some(f => f.progress > -1 && f.progress < 100)
+                if (isResponding) {
+                  return (
+                    <button
+                      className={s.sendBtn}
+                      onClick={onStop}
+                      aria-label="Stop"
+                      style={{ cursor: 'pointer' }}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+                        <rect x="2" y="2" width="10" height="10" rx="2" />
+                      </svg>
+                    </button>
+                  )
+                }
                 return (
                   <button
                     className={s.sendBtn}
