@@ -23,7 +23,7 @@ const Sidebar: FC<ISidebarProps> = ({
 }) => {
   return (
     <div
-      className="shrink-0 flex flex-col overflow-y-auto"
+      className="shrink-0 flex flex-col overflow-hidden"
       style={{
         width: 260,
         background: 'var(--sidebg)',
@@ -82,7 +82,7 @@ const Sidebar: FC<ISidebarProps> = ({
         내 대화
       </div>
 
-      <nav className="flex-1 overflow-y-auto" style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <nav className="flex-1 min-h-0 overflow-y-auto sidebar-nav" style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         {list.map((item) => {
           const isCurrent = item.id === currentId
           return (

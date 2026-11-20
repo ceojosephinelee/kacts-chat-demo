@@ -94,6 +94,22 @@ a {
   }
 } */
 
+/* Sidebar scrollbar */
+.sidebar-nav {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+.sidebar-nav::-webkit-scrollbar {
+  width: 4px;
+}
+.sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 2px;
+}
+
 /* CSS Utils */
 .h1 {
   padding-bottom: 1.5rem;
