@@ -6,6 +6,9 @@ import { useImageFiles } from '@/app/components/base/image-uploader/hooks'
 import ChatImageUploader from '@/app/components/base/image-uploader/chat-image-uploader'
 import ImageList from '@/app/components/base/image-uploader/image-list'
 import Loading02 from '@/app/components/base/icons/line/loading-02'
+import FileUploaderInAttachmentWrapper from '@/app/components/base/file-uploader-in-attachment'
+import type { FileEntity, FileUpload } from '@/app/components/base/file-uploader-in-attachment/types'
+import { getProcessedFiles } from '@/app/components/base/file-uploader-in-attachment/utils'
 
 export interface IWelcomeProps {
   conversationName: string
@@ -19,16 +22,19 @@ export interface IWelcomeProps {
   onInputsChange: (inputs: Record<string, any>) => void
   onSendFirstMessage?: (message: string, files: VisionFile[]) => void
   visionConfig?: VisionSettings
+  fileConfig?: FileUpload
 }
 
 const Welcome: FC<IWelcomeProps> = ({
   hasSetInputs,
   onSendFirstMessage,
   visionConfig,
+  fileConfig,
 }) => {
   const [query, setQuery] = useState('')
   const queryRef = useRef('')
   const isUseInputMethod = useRef(false)
+  const [attachmentFiles, setAttachmentFiles] = useState<FileEntity[]>([])
 
   const {
     files,
@@ -48,6 +54,7 @@ const Welcome: FC<IWelcomeProps> = ({
     const msg = queryRef.current.trim()
     if (!msg) return
     if (files.some(f => f.progress > -1 && f.progress < 100)) return
+    if (attachmentFiles.some(f => f.progress !== -1 && f.progress < 100)) return
     const imageFiles: VisionFile[] = files
       .filter(f => f.progress !== -1)
       .map(f => ({
@@ -56,7 +63,8 @@ const Welcome: FC<IWelcomeProps> = ({
         url: f.url,
         upload_file_id: f.fileId,
       }))
-    onSendFirstMessage?.(msg, imageFiles)
+    const docFiles: VisionFile[] = getProcessedFiles(attachmentFiles)
+    onSendFirstMessage?.(msg, [...imageFiles, ...docFiles])
     setQuery('')
     queryRef.current = ''
   }
@@ -75,7 +83,10 @@ const Welcome: FC<IWelcomeProps> = ({
   if (hasSetInputs) return null
 
   const isUploading = files.some(f => f.progress > -1 && f.progress < 100)
+    || attachmentFiles.some(f => f.progress !== -1 && f.progress < 100)
   const showUpload = !!visionConfig?.enabled
+  const showFileUpload = !!fileConfig?.enabled
+  const showAnyUpload = showUpload || showFileUpload
 
   return (
     <div
@@ -122,7 +133,7 @@ const Welcome: FC<IWelcomeProps> = ({
             gap: 10,
             border: '1.6px solid var(--navy)',
             borderRadius: 999,
-            padding: showUpload ? '9px 9px 9px 16px' : '9px 9px 9px 28px',
+            padding: showAnyUpload ? '9px 9px 9px 16px' : '9px 9px 9px 28px',
             background: 'var(--saphia-bg)',
           }}
           className="saphihugh-pill focus-within:!border-[#1b2c56]"
@@ -136,6 +147,13 @@ const Welcome: FC<IWelcomeProps> = ({
               />
               <div className="mx-1 w-[1px] h-4 bg-black/5" />
             </div>
+          )}
+          {showFileUpload && (
+            <FileUploaderInAttachmentWrapper
+              fileConfig={fileConfig!}
+              value={attachmentFiles}
+              onChange={setAttachmentFiles}
+            />
           )}
           <input
             style={{

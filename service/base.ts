@@ -242,6 +242,9 @@ const handleStream = (
         return
       }
       if (!hasError) { read() }
+    }).catch((e: any) => {
+      if (e?.name !== 'AbortError')
+        onCompleted?.(true)
     })
   }
   read()
@@ -373,6 +376,7 @@ export const ssePost = (
     onNodeStarted,
     onNodeFinished,
     onError,
+    getAbortController,
   }: IOtherOptions,
 ) => {
   const options = Object.assign({}, baseOptions, {
@@ -386,6 +390,10 @@ export const ssePost = (
 
   const { body } = options
   if (body) { options.body = JSON.stringify(body) }
+
+  const abortController = new AbortController()
+  getAbortController?.(abortController)
+  options.signal = abortController.signal
 
   globalThis.fetch(urlWithPrefix, options)
     .then((res: any) => {
@@ -410,6 +418,7 @@ export const ssePost = (
       }, onThought, onMessageEnd, onMessageReplace, onFile, onWorkflowStarted, onWorkflowFinished, onNodeStarted, onNodeFinished)
     })
     .catch((e) => {
+      if (e?.name === 'AbortError') return
       Toast.notify({ type: 'error', message: e })
       onError?.(e)
     })

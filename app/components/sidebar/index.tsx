@@ -23,13 +23,14 @@ const Sidebar: FC<ISidebarProps> = ({
 }) => {
   return (
     <div
-      className="shrink-0 flex flex-col overflow-hidden"
+      className="shrink-0 flex flex-col"
       style={{
         width: 260,
+        height: '100%',
+        overflow: 'hidden',
         background: 'var(--sidebg)',
         borderRight: isMobile ? 'none' : '1px solid var(--line)',
         borderLeft: isMobile ? '1px solid var(--line)' : 'none',
-        padding: '16px 12px',
         ...(isMobile
           ? {
               position: 'fixed',
@@ -45,44 +46,48 @@ const Sidebar: FC<ISidebarProps> = ({
           : {}),
       } as React.CSSProperties}
     >
-      {list.length < MAX_CONVERSATION_LENTH && (
-        <button
-          onClick={() => onCurrentIdChange('-1')}
+      {/* 고정 상단 영역 */}
+      <div style={{ flexShrink: 0, padding: '16px 12px 0' }}>
+        {list.length < MAX_CONVERSATION_LENTH && (
+          <button
+            onClick={() => onCurrentIdChange('-1')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 7,
+              width: '100%',
+              background: 'var(--navy)',
+              color: '#fff',
+              border: 'none',
+              borderRadius: 9,
+              padding: 11,
+              fontSize: 13,
+              fontWeight: 700,
+              cursor: 'pointer',
+              marginBottom: 18,
+              fontFamily: 'var(--body)',
+            }}
+          >
+            + {'\u00A0'}새 채팅
+          </button>
+        )}
+
+        <div
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 7,
-            background: 'var(--navy)',
-            color: '#fff',
-            border: 'none',
-            borderRadius: 9,
-            padding: 11,
-            fontSize: 13,
-            fontWeight: 700,
-            cursor: 'pointer',
-            marginBottom: 18,
-            fontFamily: 'var(--body)',
+            fontSize: 10,
+            letterSpacing: 1,
+            color: 'var(--ink-soft)',
+            textTransform: 'uppercase',
+            padding: '0 8px',
+            marginBottom: 9,
           }}
         >
-          + {'\u00A0'}새 채팅
-        </button>
-      )}
-
-      <div
-        style={{
-          fontSize: 10,
-          letterSpacing: 1,
-          color: 'var(--ink-soft)',
-          textTransform: 'uppercase',
-          padding: '0 8px',
-          marginBottom: 9,
-        }}
-      >
-        내 대화
+          내 대화
+        </div>
       </div>
 
-      <nav className="flex-1 min-h-0 overflow-y-auto sidebar-nav" style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <nav className="sidebar-nav" style={{ flex: 1, minHeight: 0, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 2, padding: '0 12px 16px' }}>
         {list.map((item) => {
           const isCurrent = item.id === currentId
           return (

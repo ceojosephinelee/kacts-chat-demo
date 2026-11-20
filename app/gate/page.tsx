@@ -18,20 +18,27 @@ export default function GatePage() {
     setLoading(true)
     setError('')
 
+    console.log('[gate] submitting, redirect target:', redirect)
+
     try {
       const res = await fetch('/api/gate', {
         method: 'POST',
+        credentials: 'same-origin',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password: pw }),
       })
 
+      console.log('[gate] response status:', res.status, 'ok:', res.ok)
+
       if (res.ok) {
-        window.location.href = redirect
+        console.log('[gate] navigating to:', redirect)
+        window.location.replace(redirect)
       } else {
         const data = await res.json()
         setError(data.error || '비밀번호가 올바르지 않습니다.')
       }
-    } catch {
+    } catch (e) {
+      console.error('[gate] fetch error:', e)
       setError('서버에 연결할 수 없습니다.')
     } finally {
       setLoading(false)

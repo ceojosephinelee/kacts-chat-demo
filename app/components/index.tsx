@@ -296,6 +296,7 @@ const Main: FC<IMainProps> = () => {
 
   const [isResponding, { setTrue: setRespondingTrue, setFalse: setRespondingFalse }] = useBoolean(false)
   const [abortController, setAbortController] = useState<AbortController | null>(null)
+  const isStoppedRef = useRef(false)
   const { notify } = Toast
   const logError = (message: string) => {
     notify({ type: 'error', message })
@@ -363,6 +364,7 @@ const Main: FC<IMainProps> = () => {
       notify({ type: 'info', message: t('app.errorMessage.waitForResponse') })
       return
     }
+    isStoppedRef.current = false
     const toServerInputs: Record<string, any> = {}
     if (currInputs) {
       Object.keys(currInputs).forEach((key) => {
@@ -433,6 +435,7 @@ const Main: FC<IMainProps> = () => {
         setAbortController(abortController)
       },
       onData: (message: string, isFirstMessage: boolean, { conversationId: newConversationId, messageId, taskId }: any) => {
+        if (isStoppedRef.current) return
         if (!isAgentMode) {
           responseItem.content = responseItem.content + message
         }
@@ -464,6 +467,7 @@ const Main: FC<IMainProps> = () => {
         })
       },
       async onCompleted(hasError?: boolean) {
+        if (isStoppedRef.current) return
         if (hasError) { return }
 
         if (getConversationIdChangeBecauseOfNew()) {
@@ -582,6 +586,7 @@ const Main: FC<IMainProps> = () => {
         ))
       },
       onError() {
+        if (isStoppedRef.current) return
         setRespondingFalse()
         // role back placeholder answer
         setChatList(produce(getChatList(), (draft) => {
@@ -638,6 +643,7 @@ const Main: FC<IMainProps> = () => {
   }
 
   const handleStop = () => {
+    isStoppedRef.current = true
     abortController?.abort()
     console.log('[stop-debug] handleStop called, messageTaskId:', messageTaskId)
     if (messageTaskId) {
@@ -740,6 +746,7 @@ const Main: FC<IMainProps> = () => {
             onInputsChange={setCurrInputs}
             onSendFirstMessage={handleSendFromWelcome}
             visionConfig={visionConfig}
+            fileConfig={fileConfig}
           />
 
           {
