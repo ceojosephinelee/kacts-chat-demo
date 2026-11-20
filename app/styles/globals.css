@@ -97,17 +97,17 @@ a {
 /* Sidebar scrollbar */
 .sidebar-nav {
   scrollbar-width: thin;
-  scrollbar-color: var(--line) transparent;
+  scrollbar-color: var(--ink-soft) transparent;
 }
 .sidebar-nav::-webkit-scrollbar {
-  width: 4px;
+  width: 8px;
 }
 .sidebar-nav::-webkit-scrollbar-track {
   background: transparent;
 }
 .sidebar-nav::-webkit-scrollbar-thumb {
-  background: var(--line);
-  border-radius: 2px;
+  background: var(--ink-soft);
+  border-radius: 4px;
 }
 
 /* CSS Utils */

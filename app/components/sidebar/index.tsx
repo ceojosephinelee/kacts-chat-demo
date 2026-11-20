@@ -2,8 +2,6 @@ import React from 'react'
 import type { FC } from 'react'
 import type { ConversationItem } from '@/types/app'
 
-const MAX_CONVERSATION_LENTH = 20
-
 export interface ISidebarProps {
   copyRight: string
   currentId: string
@@ -48,30 +46,28 @@ const Sidebar: FC<ISidebarProps> = ({
     >
       {/* 고정 상단 영역 */}
       <div style={{ flexShrink: 0, padding: '16px 12px 0' }}>
-        {list.length < MAX_CONVERSATION_LENTH && (
-          <button
-            onClick={() => onCurrentIdChange('-1')}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: 7,
-              width: '100%',
-              background: 'var(--navy)',
-              color: '#fff',
-              border: 'none',
-              borderRadius: 9,
-              padding: 11,
-              fontSize: 13,
-              fontWeight: 700,
-              cursor: 'pointer',
-              marginBottom: 18,
-              fontFamily: 'var(--body)',
-            }}
-          >
-            + {'\u00A0'}새 채팅
-          </button>
-        )}
+        <button
+          onClick={() => onCurrentIdChange('-1')}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 7,
+            width: '100%',
+            background: 'var(--navy)',
+            color: '#fff',
+            border: 'none',
+            borderRadius: 9,
+            padding: 11,
+            fontSize: 13,
+            fontWeight: 700,
+            cursor: 'pointer',
+            marginBottom: 18,
+            fontFamily: 'var(--body)',
+          }}
+        >
+          + {'\u00A0'}새 채팅
+        </button>
 
         <div
           style={{
