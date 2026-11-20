@@ -8,9 +8,10 @@ interface StreamdownMarkdownProps {
 }
 
 export function StreamdownMarkdown({ content, className = '' }: StreamdownMarkdownProps) {
+  const safe = content.replace(/(?<!~)~(?!~)/g, '\\~')
   return (
     <div className={`streamdown-markdown ${className}`}>
-      <Streamdown>{content}</Streamdown>
+      <Streamdown>{safe}</Streamdown>
     </div>
   )
 }

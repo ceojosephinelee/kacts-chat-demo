@@ -9,12 +9,23 @@ import { useTranslation } from 'react-i18next'
 import Button from '@/app/components/base/button'
 import StreamdownMarkdown from '@/app/components/base/streamdown-markdown'
 import Tooltip from '@/app/components/base/tooltip'
-import WorkflowProcess from '@/app/components/workflow/workflow-process'
 import { randomString } from '@/utils/string'
 import ImageGallery from '../../base/image-gallery'
 import LoadingAnim from '../loading-anim'
 import s from '../style.module.css'
 import Thought from '../thought'
+import { splitAnswer } from './split-answer'
+
+function getProgressLabel(tracing?: any[]): string {
+  const running = (tracing || []).filter((n: any) => n.status === 'running')
+  if (running.some((n: any) => n.node_type === 'llm' && n.title !== 'LLM 2'))
+    return '답변을 정리하는 중…'
+  if (running.some((n: any) => n.node_type === 'http-request' || n.node_type === 'code' || n.title === 'LLM 2'))
+    return '관련 논문을 찾는 중…'
+  if (running.some((n: any) => n.node_type === 'knowledge-retrieval'))
+    return '학회 자료를 찾는 중…'
+  return '질문을 확인하는 중…'
+}
 
 function OperationBtn({ innerContent, onClick, className }: { innerContent: React.ReactNode, onClick?: () => void, className?: string }) {
   return (
@@ -182,20 +193,46 @@ const Answer: FC<IAnswerProps> = ({
               border: '1px solid var(--line)',
             }}
           >
-            {workflowProcess && (
-              <WorkflowProcess data={workflowProcess} hideInfo />
-            )}
             {(isResponding && (isAgentMode ? (!content && (agent_thoughts || []).filter(item => !!item.thought || !!item.tool).length === 0) : !content))
               ? (
-                <div className="flex items-center justify-center w-6 h-5">
-                  <LoadingAnim type="text" />
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-center w-6 h-5">
+                    <LoadingAnim type="text" />
+                  </div>
+                  <span style={{ fontSize: 13, color: 'var(--ink-soft)' }}>
+                    {getProgressLabel(workflowProcess?.tracing)}
+                  </span>
                 </div>
               )
               : (isAgentMode
                 ? agentModeAnswer
-                : (
-                  <StreamdownMarkdown content={displayContent} />
-                ))}
+                : (() => {
+                  const { lead, body, refs } = splitAnswer(displayContent)
+                  return (
+                    <>
+                      {lead && (
+                        <div className="answer-lead">
+                          <StreamdownMarkdown content={lead} />
+                        </div>
+                      )}
+                      <StreamdownMarkdown content={body} />
+                      {refs.length > 0 && (
+                        <div className="answer-refs">
+                          <div className="answer-refs-title">참고 문헌</div>
+                          {refs.map(r => (
+                            <div className="answer-ref" key={r.n}>
+                              <span className="answer-ref-n">{r.n}</span>
+                              <span className="answer-ref-text">{r.text}</span>
+                              {r.url && (
+                                <a className="answer-ref-link" href={r.url} target="_blank" rel="noopener noreferrer">PubMed ↗</a>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  )
+                })())}
             {suggestedQuestions.length > 0 && (
               <div className="mt-3">
                 <div className="flex gap-1 mt-1 flex-wrap">

@@ -101,6 +101,7 @@ const Sidebar: FC<ISidebarProps> = ({
                 textOverflow: 'ellipsis',
                 background: isCurrent ? 'var(--navy-soft)' : 'transparent',
                 fontWeight: isCurrent ? 600 : 400,
+                flexShrink: 0,
               }}
               onMouseEnter={(e) => {
                 if (!isCurrent) e.currentTarget.style.background = 'var(--navy-hover)'
