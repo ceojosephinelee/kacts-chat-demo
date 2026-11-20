@@ -72,7 +72,12 @@ const Answer: FC<IAnswerProps> = ({
   const isAgentMode = !!agent_thoughts && agent_thoughts.length > 0
 
   const hasNoDoc = content.includes('[NO_DOC]')
-  const displayContent = hasNoDoc ? content.replace(/\[NO_DOC\]/g, '').trimEnd() : content
+  const basisMatch = content.match(/\[근거:([^\]]*)\]/)
+  const usedMaterial = !!basisMatch && basisMatch[1].includes('자료')
+  const displayContent = (hasNoDoc ? content.replace(/\[NO_DOC\]/g, '') : content)
+    .replace(/\[근거:[^\]]*\]?\s*$/g, '')
+    .replace(/\[근거:[^\]]*\]/g, '')
+    .trimEnd()
 
   const { t } = useTranslation()
 
@@ -216,6 +221,7 @@ const Answer: FC<IAnswerProps> = ({
                         </div>
                       )}
                       <StreamdownMarkdown content={body} />
+                      {usedMaterial && <div className="answer-basis">학회 자료</div>}
                       {refs.length > 0 && (
                         <div className="answer-refs">
                           <div className="answer-refs-title">참고 문헌</div>
