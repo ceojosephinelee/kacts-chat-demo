@@ -85,7 +85,7 @@ const Welcome: FC<IWelcomeProps> = ({
   const isUploading = files.some(f => f.progress > -1 && f.progress < 100)
     || attachmentFiles.some(f => f.progress !== -1 && f.progress < 100)
   const showUpload = !!visionConfig?.enabled
-  const showFileUpload = !!fileConfig?.enabled
+  const showFileUpload = false // !!fileConfig?.enabled — 사진 업로드 버튼 숨김 (복원: false 제거)
   const showAnyUpload = showUpload || showFileUpload
 
   return (
