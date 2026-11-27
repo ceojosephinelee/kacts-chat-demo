@@ -42,6 +42,17 @@ const Main: FC<IMainProps> = () => {
   const [inited, setInited] = useState<boolean>(false)
   // in mobile, show sidebar by click button
   const [isShowSidebar, { setTrue: showSidebar, setFalse: hideSidebar }] = useBoolean(false)
+  // desktop sidebar collapse
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
+  useEffect(() => {
+    if (localStorage.getItem('saphia-sidebar-collapsed') === 'true')
+      setIsSidebarCollapsed(true)
+  }, [])
+  const toggleSidebar = () => {
+    const next = !isSidebarCollapsed
+    setIsSidebarCollapsed(next)
+    localStorage.setItem('saphia-sidebar-collapsed', String(next))
+  }
   const [visionConfig, setVisionConfig] = useState<VisionSettings | undefined>({
     enabled: false,
     number_limits: 3,
@@ -689,6 +700,7 @@ const Main: FC<IMainProps> = () => {
         onCurrentIdChange={handleConversationIdChange}
         currentId={currConversationId}
         copyRight={APP_INFO.copyright || APP_INFO.title}
+        onCollapse={toggleSidebar}
       />
     )
   }
@@ -708,7 +720,42 @@ const Main: FC<IMainProps> = () => {
       />
       <div className="flex overflow-hidden" style={{ flex: 1, minHeight: 0 }}>
         {/* sidebar */}
-        {!isMobile && renderSidebar()}
+        {!isMobile && (
+          <div style={{
+            width: isSidebarCollapsed ? 0 : 260,
+            flexShrink: 0,
+            overflow: 'hidden',
+            transition: 'width 200ms ease',
+          }}>
+            {renderSidebar()}
+          </div>
+        )}
+        {!isMobile && isSidebarCollapsed && (
+          <button
+            onClick={toggleSidebar}
+            title="사이드바 열기"
+            style={{
+              position: 'fixed',
+              top: 60,
+              left: 12,
+              zIndex: 50,
+              width: 34,
+              height: 34,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: 'var(--sidebg)',
+              border: '1px solid var(--line)',
+              borderRadius: 9,
+              cursor: 'pointer',
+              color: 'var(--ink-soft)',
+              fontSize: 15,
+              boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+            }}
+          >
+            ☰
+          </button>
+        )}
         {isMobile && (
           <>
             {isShowSidebar && (

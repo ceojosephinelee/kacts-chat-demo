@@ -9,6 +9,7 @@ export interface ISidebarProps {
   list: ConversationItem[]
   isMobile?: boolean
   isOpen?: boolean
+  onCollapse?: () => void
 }
 
 const Sidebar: FC<ISidebarProps> = ({
@@ -18,6 +19,7 @@ const Sidebar: FC<ISidebarProps> = ({
   list,
   isMobile,
   isOpen,
+  onCollapse,
 }) => {
   return (
     <div
@@ -46,28 +48,51 @@ const Sidebar: FC<ISidebarProps> = ({
     >
       {/* 고정 상단 영역 */}
       <div style={{ flexShrink: 0, padding: '16px 12px 0' }}>
-        <button
-          onClick={() => onCurrentIdChange('-1')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: 7,
-            width: '100%',
-            background: 'var(--navy)',
-            color: '#fff',
-            border: 'none',
-            borderRadius: 9,
-            padding: 11,
-            fontSize: 13,
-            fontWeight: 700,
-            cursor: 'pointer',
-            marginBottom: 18,
-            fontFamily: 'var(--body)',
-          }}
-        >
-          + {'\u00A0'}새 채팅
-        </button>
+        <div style={{ display: 'flex', gap: 6, marginBottom: 18 }}>
+          <button
+            onClick={() => onCurrentIdChange('-1')}
+            style={{
+              flex: 1,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 7,
+              background: 'var(--navy)',
+              color: '#fff',
+              border: 'none',
+              borderRadius: 9,
+              padding: 11,
+              fontSize: 13,
+              fontWeight: 700,
+              cursor: 'pointer',
+              fontFamily: 'var(--body)',
+            }}
+          >
+            + {'\u00A0'}새 채팅
+          </button>
+          {onCollapse && (
+            <button
+              onClick={onCollapse}
+              title="사이드바 접기"
+              style={{
+                flexShrink: 0,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 36,
+                background: 'transparent',
+                border: '1px solid var(--line)',
+                borderRadius: 9,
+                cursor: 'pointer',
+                color: 'var(--ink-soft)',
+                fontSize: 15,
+                fontFamily: 'var(--body)',
+              }}
+            >
+              «
+            </button>
+          )}
+        </div>
 
         <div
           style={{
