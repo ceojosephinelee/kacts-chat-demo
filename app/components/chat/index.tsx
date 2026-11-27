@@ -323,7 +323,7 @@ const Chat: FC<IChatProps> = ({
                 color: 'var(--ink-soft)',
               }}
             >
-              SAPHIHUGH는 임상 참고 정보를 제공하며, 최종 진단·처방의 책임은 진료 의사에게 있습니다.
+              SAPIHUGH는 임상 참고 정보를 제공하며, 최종 진단·처방의 책임은 진료 의사에게 있습니다.
             </div>
           </div>
         )

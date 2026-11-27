@@ -168,7 +168,7 @@ const Welcome: FC<IWelcomeProps> = ({
               color: 'var(--ink)',
             }}
             className="saphihugh-pill-input"
-            placeholder="SAPHIHUGH 에게 물어보기"
+            placeholder="SAPIHUGH 에게 물어보기"
             value={query}
             onChange={handleContentChange}
             onKeyUp={handleKeyUp}

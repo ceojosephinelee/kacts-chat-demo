@@ -67,7 +67,7 @@ export default function GatePage() {
     >
       <img
         src="/saphihugh_symbol.png"
-        alt="SAPHIHUGH"
+        alt="SAPIHUGH"
         style={{ width: 84, height: 'auto', marginBottom: 22 }}
       />
 
@@ -78,7 +78,7 @@ export default function GatePage() {
         letterSpacing: 1,
         color: 'var(--navy, #1b2c56)',
       }}>
-        SAPHIHUGH
+        SAPIHUGH
       </div>
       <div style={{ fontSize: 14, color: 'var(--ink-soft, #707887)', margin: '10px 0 28px' }}>
         초대된 사용자만 이용할 수 있습니다.
