@@ -1,0 +1,369 @@
+/* ============================================================
+   SAPHIHUGH 답변 스타일 (saphi-answer.css)
+   ------------------------------------------------------------
+   DOM 구조:
+     .answerWrap.saphi-answer          ← 버블 wrapper
+       └── div (position:relative)
+            └── div (bubble padding)
+                 ├── div.answer-lead
+                 │    └── div.streamdown-markdown  ← 리드 마크다운
+                 ├── div.streamdown-markdown        ← 본문 마크다운
+                 ├── div.answer-basis               ← 학회 자료 뱃지
+                 └── div.answer-refs
+                      ├── div.answer-refs-title
+                      └── div.answer-ref (×N)
+                           ├── span.answer-ref-n
+                           ├── span.answer-ref-text
+                           └── a.answer-ref-link
+
+   마크다운 엘리먼트(h3,ul,table,blockquote 등)는
+   모두 .streamdown-markdown 안에서 렌더됨.
+
+   ⚠ <sup> 출처: rehypeSanitize가 태그를 제거하므로
+      모델은 유니코드 ¹²³⁴⁵ 를 사용해야 함.
+   ============================================================ */
+
+/* ---- CSS 변수 & 카운터 ---- */
+.saphi-answer {
+  --sa-navy:   #1b2a5e;
+  --sa-accent: #3f6bd6;
+  --sa-ink:    #1e2430;
+  --sa-body:   #3a4454;
+  --sa-muted:  #737e92;
+  --sa-line:   #e6eaf1;
+  --sa-tint:   #f4f7fc;
+  --sa-badge:  #e9eef8;
+  counter-reset: sec;
+  color: var(--sa-ink);
+  font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', system-ui, sans-serif;
+  font-size: 14.3px;
+  line-height: 1.78;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ================================================================
+   리드 (answer-lead)
+   - globals의 border-left 단색바를 gradient ::before 바로 교체
+   ================================================================ */
+.saphi-answer .answer-lead {
+  position: relative;
+  padding-left: 16px;
+  border-left: none;
+  margin-bottom: 14px;
+}
+.saphi-answer .answer-lead::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 3px; bottom: 3px;
+  width: 4px;
+  border-radius: 3px;
+  background: linear-gradient(to bottom, var(--sa-navy), var(--sa-accent));
+}
+.saphi-answer .answer-lead p {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--sa-navy);
+  line-height: 1.5;
+  letter-spacing: -.3px;
+  margin: 0;
+}
+
+/* ================================================================
+   번호 섹션 제목 h3 — CSS counter 자동 번호 뱃지
+   (모델이 수동으로 "1." "2." 쓰면 뱃지와 겹침 → 금지)
+   ================================================================ */
+.saphi-answer .streamdown-markdown h3 {
+  counter-increment: sec;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15.5px;
+  font-weight: 800;
+  color: var(--sa-ink);
+  letter-spacing: -.2px;
+  margin-top: 22px;
+  margin-bottom: 9px;
+}
+.saphi-answer .streamdown-markdown h3::before {
+  content: counter(sec);
+  flex-shrink: 0;
+  width: 24px; height: 24px;
+  border-radius: 7px;
+  background: var(--sa-navy);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---- 기타 헤딩 ---- */
+.saphi-answer .streamdown-markdown h1,
+.saphi-answer .streamdown-markdown h2 {
+  font-size: 15.5px;
+  font-weight: 800;
+  color: var(--sa-navy);
+  margin-top: 22px;
+  margin-bottom: 9px;
+  line-height: 1.5;
+}
+.saphi-answer .streamdown-markdown h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--sa-navy);
+  margin-top: 18px;
+  margin-bottom: 6px;
+}
+
+/* ---- 본문 p / strong ---- */
+.saphi-answer .streamdown-markdown p {
+  color: var(--sa-body);
+  margin: 0 0 12px;
+  line-height: 1.75;
+}
+.saphi-answer .streamdown-markdown strong {
+  color: var(--sa-navy);
+  font-weight: 700;
+}
+
+/* ---- 링크 ---- */
+.saphi-answer .streamdown-markdown a {
+  color: var(--sa-navy);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ================================================================
+   글머리표 ul — 포인트블루 점 + 용어 네이비 볼드
+   ================================================================ */
+.saphi-answer .streamdown-markdown ul {
+  list-style: none;
+  margin: 10px 0;
+  padding: 0;
+}
+.saphi-answer .streamdown-markdown ul > li {
+  position: relative;
+  padding: 4px 0 4px 18px;
+  color: var(--sa-body);
+  line-height: 1.65;
+  margin-bottom: 6px;
+}
+.saphi-answer .streamdown-markdown ul > li::before {
+  content: "";
+  position: absolute;
+  left: 2px; top: 12px;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--sa-accent);
+}
+.saphi-answer .streamdown-markdown ul > li strong {
+  color: var(--sa-navy);
+}
+
+/* ---- 순서 있는 목록 ol (본문용) ---- */
+.saphi-answer .streamdown-markdown ol {
+  list-style: decimal;
+  padding-left: 1.6em;
+}
+.saphi-answer .streamdown-markdown ol > li {
+  color: var(--sa-body);
+  line-height: 1.75;
+  margin-bottom: 6px;
+}
+
+/* ================================================================
+   스펙시트 2단 (table)
+   - thead 숨김, 좌열 네이비 볼드 고정폭, 테두리 없음
+   ================================================================ */
+.saphi-answer .streamdown-markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+  font-size: 13.6px;
+}
+.saphi-answer .streamdown-markdown table thead {
+  display: none;
+}
+.saphi-answer .streamdown-markdown table td {
+  padding: 9px 0;
+  border-top: 1px solid var(--sa-line);
+  vertical-align: top;
+  line-height: 1.6;
+}
+.saphi-answer .streamdown-markdown table tr:first-child td {
+  border-top: none;
+}
+.saphi-answer .streamdown-markdown table td:first-child {
+  width: 122px;
+  padding-right: 14px;
+  font-weight: 800;
+  color: var(--sa-navy);
+  white-space: nowrap;
+}
+.saphi-answer .streamdown-markdown table td:last-child {
+  color: var(--sa-body);
+}
+
+/* ================================================================
+   결론 박스 (blockquote) — 연한 네이비 틴트 + 왼쪽 네이비 보더
+   ================================================================ */
+.saphi-answer .streamdown-markdown blockquote {
+  margin: 22px 0 0;
+  padding: 15px 20px;
+  background: var(--sa-tint);
+  border: 1px solid #e1e9f6;
+  border-left: 4px solid var(--sa-navy);
+  border-radius: 0 12px 12px 0;
+}
+.saphi-answer .streamdown-markdown blockquote p {
+  color: var(--sa-body);
+  line-height: 1.75;
+}
+.saphi-answer .streamdown-markdown blockquote p:first-child {
+  margin: 0;
+}
+.saphi-answer .streamdown-markdown blockquote strong {
+  color: var(--sa-navy);
+}
+/* 결론 박스 첫 strong → 블록 제목처럼 */
+.saphi-answer .streamdown-markdown blockquote > p:first-child > strong:first-child {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+/* ================================================================
+   출처 위첨자 sup
+   ⚠ rehypeSanitize가 <sup> 태그를 제거하므로
+     모델은 유니코드 ¹²³⁴⁵ 를 사용해야 함.
+     이 규칙은 혹시 sup이 살아남을 경우의 안전망.
+   ================================================================ */
+.saphi-answer .streamdown-markdown sup {
+  color: var(--sa-accent);
+  font-weight: 800;
+  font-size: 10.5px;
+  vertical-align: super;
+  margin-left: 1px;
+}
+
+/* ---- 구분선 ---- */
+.saphi-answer .streamdown-markdown hr {
+  border: none;
+  border-top: 1px solid var(--sa-line);
+  margin: 26px 0 0;
+}
+
+/* ================================================================
+   참고문헌 박스 (answer-refs)
+   ================================================================ */
+.saphi-answer .answer-refs {
+  margin-top: 20px;
+  padding: 14px 18px;
+  background: #fbfcfe;
+  border: 1px solid var(--sa-line);
+  border-radius: 12px;
+}
+
+/* 참고문헌 라벨 (answer-refs-title) */
+.saphi-answer .answer-refs-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--sa-navy);
+  letter-spacing: .8px;
+}
+.saphi-answer .answer-refs-title::before {
+  content: "";
+  flex-shrink: 0;
+  width: 3px; height: 14px;
+  border-radius: 2px;
+  background: var(--sa-navy);
+}
+
+/* 참고문헌 아이템 행 (answer-ref) */
+.saphi-answer .answer-ref {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 10px 0;
+  border-top: 1px solid #eef1f6;
+  font-size: 12.5px;
+  color: #55607a;
+  line-height: 1.6;
+}
+.saphi-answer .answer-ref:first-of-type {
+  border-top: none;
+}
+
+/* 번호 뱃지 (answer-ref-n) — JSX에서 이미 숫자 주입, CSS counter 불필요 */
+.saphi-answer .answer-ref-n {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 21px; height: 21px;
+  padding: 0 4px;
+  border-radius: 6px;
+  background: var(--sa-badge);
+  color: var(--sa-navy);
+  font-weight: 800;
+  font-size: 11.5px;
+  margin-top: 1px;
+}
+
+/* 참고문헌 텍스트 (answer-ref-text) */
+.saphi-answer .answer-ref-text {
+  flex: 1;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: #55607a;
+}
+.saphi-answer .answer-ref-text em,
+.saphi-answer .answer-ref-text i {
+  font-style: italic;
+  color: #6b7791;
+}
+
+/* PubMed 버튼 (answer-ref-link) — 네이비 아웃라인 소형 버튼 */
+.saphi-answer .answer-ref-link {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--sa-navy);
+  border: 1.5px solid var(--sa-navy);
+  border-radius: 999px;
+  padding: 3px 10px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background .15s;
+}
+.saphi-answer .answer-ref-link:hover {
+  background: var(--sa-tint);
+}
+
+/* ================================================================
+   학회 자료 뱃지 (answer-basis) — 네이비 pill
+   ================================================================ */
+.saphi-answer .answer-basis {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 16px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--sa-navy);
+  background: var(--sa-badge);
+  border-radius: 999px;
+  padding: 4px 12px;
+  letter-spacing: .3px;
+}
+
+/* ---- 모바일 ---- */
+@media (max-width: 620px) {
+  .saphi-answer .streamdown-markdown table td:first-child {
+    width: 92px;
+  }
+}

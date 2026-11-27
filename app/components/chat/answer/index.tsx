@@ -185,7 +185,7 @@ const Answer: FC<IAnswerProps> = ({
       </div>
 
       {/* bubble */}
-      <div className={s.answerWrap} style={{ maxWidth: 'calc(100% - 3rem)' }}>
+      <div className={`${s.answerWrap} saphi-answer`} style={{ maxWidth: 'calc(100% - 3rem)' }}>
         <div style={{ position: 'relative' }}>
           <div
             style={{

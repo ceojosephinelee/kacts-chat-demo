@@ -1,3 +1,5 @@
+@import './saphi-answer.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -133,28 +135,3 @@ a {
   text-fill-color: transparent;
 }
 
-/* Streamdown bullet / list styles */
-.streamdown-markdown ul { list-style: none; padding-left: 1.4em; }
-.streamdown-markdown ul > li { position: relative; }
-.streamdown-markdown ul > li::before {
-  content: ""; position: absolute; left: -1em; top: 0.7em;
-  width: 5px; height: 5px; border-radius: 50%;
-  background: var(--navy, #1b2c56);
-}
-.streamdown-markdown ol { list-style: decimal; padding-left: 1.6em; }
-
-/* Answer layout */
-.answer-lead { border-left: 3px solid var(--navy); padding-left: 12px; margin-bottom: 14px; }
-.answer-lead p { font-size: 16px; font-weight: 600; line-height: 1.6; color: var(--ink); margin: 0; }
-.streamdown-markdown h1, .streamdown-markdown h2, .streamdown-markdown h3, .streamdown-markdown h4 { font-size: 15px; font-weight: 600; color: var(--navy); margin: 18px 0 6px; line-height: 1.5; }
-.streamdown-markdown p { margin: 0 0 12px; line-height: 1.75; }
-.streamdown-markdown li { margin-bottom: 6px; line-height: 1.75; }
-.streamdown-markdown a { color: var(--navy); text-decoration: underline; text-underline-offset: 2px; }
-.answer-refs { margin-top: 20px; padding: 14px 16px; background: var(--sidebg); border: 1px solid var(--line); border-radius: 10px; }
-.answer-refs-title { font-size: 12px; font-weight: 600; color: var(--ink-soft); margin-bottom: 8px; }
-.answer-ref { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-top: 1px solid var(--line); }
-.answer-ref-n { flex-shrink: 0; font-size: 11px; font-weight: 600; color: var(--navy); background: var(--navy-soft); border-radius: 4px; padding: 1px 6px; margin-top: 2px; }
-.answer-ref-text { flex: 1; font-size: 12px; line-height: 1.6; color: var(--ink-soft); }
-.answer-ref-link { flex-shrink: 0; font-size: 11px; font-weight: 600; color: var(--navy); border: 1px solid var(--navy); border-radius: 999px; padding: 3px 9px; text-decoration: none; white-space: nowrap; }
-.answer-ref-link:hover { background: var(--navy-soft); }
-.answer-basis { display: inline-block; margin-top: 16px; font-size: 11px; font-weight: 600; color: var(--navy); background: var(--navy-soft); border-radius: 999px; padding: 3px 10px; }
