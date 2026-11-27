@@ -244,8 +244,9 @@ const Chat: FC<IChatProps> = ({
                   </div>
                 )
               }
+              {/* 사진 업로드 버튼 — 필요 시 false && 제거하여 복원 */}
               {
-                fileConfig?.enabled && (
+                false && fileConfig?.enabled && (
                   <FileUploaderInAttachmentWrapper
                     fileConfig={fileConfig}
                     value={attachmentFiles}
