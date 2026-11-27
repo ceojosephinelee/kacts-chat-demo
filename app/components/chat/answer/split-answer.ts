@@ -52,7 +52,7 @@ export function splitAnswer(content: string): SplitAnswerResult {
     }
 
     // 2. 결론 문장(lead) 분리
-    const SPECIAL_START = /^(#{1,6}[\s]|-|\*|\||>|\d+\.)/
+    const SPECIAL_START = /^(#{1,6}[\s]|-|\*\s|\||>|\d+\.)/
     const firstBlank = bodyText.indexOf('\n\n')
     const firstPara = firstBlank === -1 ? bodyText : bodyText.slice(0, firstBlank)
     const trimmedPara = firstPara.trim()

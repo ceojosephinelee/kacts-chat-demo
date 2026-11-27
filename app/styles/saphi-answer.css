@@ -9,18 +9,12 @@
                  │    └── div.streamdown-markdown  ← 리드 마크다운
                  ├── div.streamdown-markdown        ← 본문 마크다운
                  ├── div.answer-basis               ← 학회 자료 뱃지
-                 └── div.answer-refs
-                      ├── div.answer-refs-title
-                      └── div.answer-ref (×N)
-                           ├── span.answer-ref-n
-                           ├── span.answer-ref-text
-                           └── a.answer-ref-link
+                 └── div.answer-refs / .answer-ref-* (JSX 렌더)
 
-   마크다운 엘리먼트(h3,ul,table,blockquote 등)는
-   모두 .streamdown-markdown 안에서 렌더됨.
-
-   ⚠ <sup> 출처: rehypeSanitize가 태그를 제거하므로
-      모델은 유니코드 ¹²³⁴⁵ 를 사용해야 함.
+   ⚠ Streamdown 실제 DOM 주의사항
+     · **bold**  → <span data-streamdown="strong"> (NOT <strong>)
+     · blockquote → Tailwind italic 클래스가 기본 적용됨
+     · <sup> 태그: rehypeSanitize가 제거 → 모델은 유니코드 ¹²³ 사용
    ============================================================ */
 
 /* ---- CSS 변수 & 카운터 ---- */
@@ -44,6 +38,8 @@
 /* ================================================================
    리드 (answer-lead)
    - globals의 border-left 단색바를 gradient ::before 바로 교체
+   - Streamdown: **bold** → <span data-streamdown="strong"> 이므로
+     [data-streamdown="strong"] 셀렉터로 타이포 스타일 적용
    ================================================================ */
 .saphi-answer .answer-lead {
   position: relative;
@@ -67,10 +63,44 @@
   letter-spacing: -.3px;
   margin: 0;
 }
+/* Streamdown이 **bold**를 <span data-streamdown="strong">으로 렌더 */
+.saphi-answer .answer-lead [data-streamdown="strong"] {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--sa-navy);
+  letter-spacing: -.3px;
+}
+
+/* ================================================================
+   CSS 리드 fallback
+   splitAnswer가 lead를 못 뽑았을 때:
+   body .streamdown-markdown의 첫 p 전체가 bold(only-child span)이면
+   → 그라데이션 바 + 네이비 볼드 처리
+   ================================================================ */
+.saphi-answer :not(.answer-lead) > .streamdown-markdown > p:first-child:has(> [data-streamdown="strong"]:only-child) {
+  position: relative;
+  padding-left: 16px;
+  margin-bottom: 14px;
+}
+.saphi-answer :not(.answer-lead) > .streamdown-markdown > p:first-child:has(> [data-streamdown="strong"]:only-child)::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 3px; bottom: 3px;
+  width: 4px;
+  border-radius: 3px;
+  background: linear-gradient(to bottom, var(--sa-navy), var(--sa-accent));
+}
+.saphi-answer :not(.answer-lead) > .streamdown-markdown > p:first-child:has(> [data-streamdown="strong"]:only-child) > [data-streamdown="strong"] {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--sa-navy);
+  line-height: 1.5;
+  letter-spacing: -.3px;
+}
 
 /* ================================================================
    번호 섹션 제목 h3 — CSS counter 자동 번호 뱃지
-   (모델이 수동으로 "1." "2." 쓰면 뱃지와 겹침 → 금지)
+   Streamdown: h3 → <h3 data-streamdown="heading-3"> (태그 그대로)
    ================================================================ */
 .saphi-answer .streamdown-markdown h3 {
   counter-increment: sec;
@@ -116,13 +146,15 @@
   margin-bottom: 6px;
 }
 
-/* ---- 본문 p / strong ---- */
+/* ---- 본문 p ---- */
 .saphi-answer .streamdown-markdown p {
   color: var(--sa-body);
   margin: 0 0 12px;
   line-height: 1.75;
 }
-.saphi-answer .streamdown-markdown strong {
+
+/* ---- bold: Streamdown → <span data-streamdown="strong"> ---- */
+.saphi-answer .streamdown-markdown [data-streamdown="strong"] {
   color: var(--sa-navy);
   font-weight: 700;
 }
@@ -135,7 +167,9 @@
 }
 
 /* ================================================================
-   글머리표 ul — 포인트블루 점 + 용어 네이비 볼드
+   글머리표 ul
+   Streamdown: ul → <ul class="list-inside list-disc ...">
+   우리 규칙(specificity 0,2,1)이 Tailwind(0,1,0)를 덮어씀
    ================================================================ */
 .saphi-answer .streamdown-markdown ul {
   list-style: none;
@@ -157,8 +191,10 @@
   border-radius: 50%;
   background: var(--sa-accent);
 }
-.saphi-answer .streamdown-markdown ul > li strong {
+/* li 안의 bold 용어 — Streamdown: <span data-streamdown="strong"> */
+.saphi-answer .streamdown-markdown ul > li [data-streamdown="strong"] {
   color: var(--sa-navy);
+  font-weight: 700;
 }
 
 /* ---- 순서 있는 목록 ol (본문용) ---- */
@@ -174,7 +210,8 @@
 
 /* ================================================================
    스펙시트 2단 (table)
-   - thead 숨김, 좌열 네이비 볼드 고정폭, 테두리 없음
+   Streamdown: table → <table data-streamdown="table">
+   thead, tbody는 각각 data-streamdown="table-header"/"table-body"
    ================================================================ */
 .saphi-answer .streamdown-markdown table {
   width: 100%;
@@ -182,7 +219,8 @@
   margin: 12px 0;
   font-size: 13.6px;
 }
-.saphi-answer .streamdown-markdown table thead {
+.saphi-answer .streamdown-markdown table thead,
+.saphi-answer .streamdown-markdown [data-streamdown="table-header"] {
   display: none;
 }
 .saphi-answer .streamdown-markdown table td {
@@ -206,7 +244,10 @@
 }
 
 /* ================================================================
-   결론 박스 (blockquote) — 연한 네이비 틴트 + 왼쪽 네이비 보더
+   결론 박스 (blockquote)
+   Streamdown: <blockquote class="... italic" data-streamdown="blockquote">
+     → Tailwind italic 클래스로 전체가 기울임 → font-style:normal로 해제
+   제목(첫 strong): flex-direction:column으로 타이틀과 본문 줄 분리
    ================================================================ */
 .saphi-answer .streamdown-markdown blockquote {
   margin: 22px 0 0;
@@ -215,31 +256,40 @@
   border: 1px solid #e1e9f6;
   border-left: 4px solid var(--sa-navy);
   border-radius: 0 12px 12px 0;
+  font-style: normal; /* Streamdown의 italic 클래스 무력화 */
 }
 .saphi-answer .streamdown-markdown blockquote p {
   color: var(--sa-body);
   line-height: 1.75;
+  font-style: normal;
 }
 .saphi-answer .streamdown-markdown blockquote p:first-child {
   margin: 0;
+  /* flex: 첫 span(제목)과 나머지 텍스트를 세로로 분리 */
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
-.saphi-answer .streamdown-markdown blockquote strong {
+/* blockquote 안 bold — <span data-streamdown="strong"> */
+.saphi-answer .streamdown-markdown blockquote [data-streamdown="strong"] {
   color: var(--sa-navy);
+  font-style: normal;
 }
-/* 결론 박스 첫 strong → 블록 제목처럼 */
-.saphi-answer .streamdown-markdown blockquote > p:first-child > strong:first-child {
-  display: block;
-  margin-bottom: 6px;
+/* 결론 박스 첫 strong → 타이틀 블록 */
+.saphi-answer .streamdown-markdown blockquote > p:first-child > [data-streamdown="strong"]:first-child {
   font-size: 14px;
+  font-weight: 800;
+  color: var(--sa-navy);
+  font-style: normal;
 }
 
 /* ================================================================
    출처 위첨자 sup
-   ⚠ rehypeSanitize가 <sup> 태그를 제거하므로
-     모델은 유니코드 ¹²³⁴⁵ 를 사용해야 함.
-     이 규칙은 혹시 sup이 살아남을 경우의 안전망.
+   Streamdown에 superscript 컴포넌트가 있어 <sup data-streamdown="superscript">로 렌더될 수 있음
+   모델은 기본적으로 유니코드 ¹²³ 사용 권장
    ================================================================ */
-.saphi-answer .streamdown-markdown sup {
+.saphi-answer .streamdown-markdown sup,
+.saphi-answer .streamdown-markdown [data-streamdown="superscript"] {
   color: var(--sa-accent);
   font-weight: 800;
   font-size: 10.5px;
@@ -255,7 +305,7 @@
 }
 
 /* ================================================================
-   참고문헌 박스 (answer-refs)
+   참고문헌 박스 (answer-refs) — JSX에서 직접 렌더
    ================================================================ */
 .saphi-answer .answer-refs {
   margin-top: 20px;
@@ -264,8 +314,6 @@
   border: 1px solid var(--sa-line);
   border-radius: 12px;
 }
-
-/* 참고문헌 라벨 (answer-refs-title) */
 .saphi-answer .answer-refs-title {
   display: flex;
   align-items: center;
@@ -283,8 +331,6 @@
   border-radius: 2px;
   background: var(--sa-navy);
 }
-
-/* 참고문헌 아이템 행 (answer-ref) */
 .saphi-answer .answer-ref {
   display: flex;
   gap: 10px;
@@ -298,8 +344,6 @@
 .saphi-answer .answer-ref:first-of-type {
   border-top: none;
 }
-
-/* 번호 뱃지 (answer-ref-n) — JSX에서 이미 숫자 주입, CSS counter 불필요 */
 .saphi-answer .answer-ref-n {
   flex-shrink: 0;
   display: inline-flex;
@@ -314,8 +358,6 @@
   font-size: 11.5px;
   margin-top: 1px;
 }
-
-/* 참고문헌 텍스트 (answer-ref-text) */
 .saphi-answer .answer-ref-text {
   flex: 1;
   font-size: 12.5px;
@@ -327,8 +369,7 @@
   font-style: italic;
   color: #6b7791;
 }
-
-/* PubMed 버튼 (answer-ref-link) — 네이비 아웃라인 소형 버튼 */
+/* PubMed 버튼 — 네이비 아웃라인 소형 버튼 */
 .saphi-answer .answer-ref-link {
   flex-shrink: 0;
   font-size: 11px;
