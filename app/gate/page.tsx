@@ -66,7 +66,7 @@ export default function GatePage() {
       }}
     >
       <img
-        src="/saphihugh_symbol.png"
+        src="/sapihugh_symbol.png"
         alt="SAPIHUGH"
         style={{ width: 84, height: 'auto', marginBottom: 22 }}
       />

@@ -109,7 +109,7 @@ const Welcome: FC<IWelcomeProps> = ({
           letterSpacing: -0.3,
           textAlign: 'center',
         }}
-        className="saphihugh-welcome-hi"
+        className="sapihugh-welcome-hi"
       >
         안녕하세요. 오늘도 함께할까요?
       </div>
@@ -136,7 +136,7 @@ const Welcome: FC<IWelcomeProps> = ({
             padding: showAnyUpload ? '9px 9px 9px 16px' : '9px 9px 9px 28px',
             background: 'var(--saphia-bg)',
           }}
-          className="saphihugh-pill focus-within:!border-[#1b2c56]"
+          className="sapihugh-pill focus-within:!border-[#1b2c56]"
         >
           {showUpload && (
             <div className="flex items-center">
@@ -167,7 +167,7 @@ const Welcome: FC<IWelcomeProps> = ({
               padding: '14px 0',
               color: 'var(--ink)',
             }}
-            className="saphihugh-pill-input"
+            className="sapihugh-pill-input"
             placeholder="SAPIHUGH 에게 물어보기"
             value={query}
             onChange={handleContentChange}
@@ -177,7 +177,7 @@ const Welcome: FC<IWelcomeProps> = ({
           <button
             onClick={handleSend}
             disabled={isUploading}
-            className="saphihugh-go-btn"
+            className="sapihugh-go-btn"
             style={{
               width: 54,
               height: 54,
@@ -204,8 +204,8 @@ const Welcome: FC<IWelcomeProps> = ({
         )}
       </div>
 
-      <div style={{ textAlign: 'center', marginTop: 28, maxWidth: 640 }} className="saphihugh-tag">
-        <div style={{ fontSize: 15, color: 'var(--ink-soft)', lineHeight: 1.7 }} className="saphihugh-tag-l1">
+      <div style={{ textAlign: 'center', marginTop: 28, maxWidth: 640 }} className="sapihugh-tag">
+        <div style={{ fontSize: 15, color: 'var(--ink-soft)', lineHeight: 1.7 }} className="sapihugh-tag-l1">
           학회의 연구와 학술 자료를 기반으로 필요한 지식을 찾고, 이해하고, 임상에 적용합니다.
         </div>
         <div
@@ -216,7 +216,7 @@ const Welcome: FC<IWelcomeProps> = ({
             color: 'var(--navy)',
             marginTop: 8,
           }}
-          className="saphihugh-tag-l2"
+          className="sapihugh-tag-l2"
         >
           ASK. LEARN. APPLY.
         </div>
@@ -224,26 +224,26 @@ const Welcome: FC<IWelcomeProps> = ({
 
       <style jsx>{`
         @media (max-width: 768px) {
-          .saphihugh-welcome-hi {
+          .sapihugh-welcome-hi {
             font-size: 21px !important;
             margin-bottom: 26px !important;
           }
-          .saphihugh-pill {
+          .sapihugh-pill {
             padding: 7px 7px 7px 13px !important;
           }
-          .saphihugh-pill-input {
+          .sapihugh-pill-input {
             font-size: 15px !important;
             padding: 12px 0 !important;
           }
-          .saphihugh-go-btn {
+          .sapihugh-go-btn {
             width: 46px !important;
             height: 46px !important;
             font-size: 19px !important;
           }
-          .saphihugh-tag-l1 {
+          .sapihugh-tag-l1 {
             font-size: 13px !important;
           }
-          .saphihugh-tag-l2 {
+          .sapihugh-tag-l2 {
             font-size: 15px !important;
           }
         }

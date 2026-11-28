@@ -25,7 +25,7 @@ const Header: FC<IHeaderProps> = ({
       }}
     >
       <img
-        src="/saphihugh_logo.png"
+        src="/sapihugh_logo.png"
         alt="SAPIHUGH"
         style={{
           height: isMobile ? 34 : 46,
